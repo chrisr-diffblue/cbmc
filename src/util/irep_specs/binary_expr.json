@@ -1,0 +1,11 @@
+{
+  "parent": "expr",
+  "sub": [ {"schema": "expr", "friendly_name": [ "op0", "lhs" ]},
+           {"schema": "expr", "friendly_name": [ "op1", "rhs" ]} ],
+  "trivial_subclass_ids": [
+    "+", "-", "*", "/", "**", "mod", "rem", "factorial_power",
+    "=", "notequal", ">", "<", ">=", "<=", "complex", "implies",
+    "bitor", "bitxor", "bitand", "shl", "ashr", "lshr",
+    "ieee_float_equal", "ieee_float_notequal"
+  ]
+}

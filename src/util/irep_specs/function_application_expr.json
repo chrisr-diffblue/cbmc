@@ -1,0 +1,9 @@
+{
+  "parent": "expr",
+  "sub": [
+    {"schema": "expr", "friendly_name": "function"},
+    {
+      "sub": [ {"number": "*", "schema": "expr", "friendly_name": "argument"} ]
+    }
+  ]
+}

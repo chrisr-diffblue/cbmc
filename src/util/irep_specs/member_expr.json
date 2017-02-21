@@ -1,0 +1,10 @@
+{
+  "parent": "expr",
+  "sub": [
+    {"schema": "expr", "friendly_name": "compound"}
+  ],
+  "namedSub": {
+    "component_name": {"type": "string"},
+    "component_number": {"type": "integer"}
+  }
+}
