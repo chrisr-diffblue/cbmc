@@ -2,7 +2,7 @@ DIRS = ansi-c big-int cbmc jbmc cpp goto-cc goto-instrument goto-programs \
        goto-symex langapi pointer-analysis solvers util linking xmllang \
        assembler analyses java_bytecode \
        json goto-analyzer jsil goto-diff clobber \
-       memory-models miniz
+       memory-models miniz json-symtab-language
 
 all: cbmc.dir jbmc.dir goto-cc.dir goto-instrument.dir \
      goto-analyzer.dir goto-diff.dir
@@ -23,7 +23,7 @@ java_bytecode.dir: miniz.dir
 
 languages: util.dir langapi.dir \
            cpp.dir ansi-c.dir xmllang.dir assembler.dir java_bytecode.dir \
-           jsil.dir
+           jsil.dir json-symtab-language.dir
 
 solvers.dir: util.dir langapi.dir
 
