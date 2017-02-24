@@ -37,6 +37,11 @@ class json_symtab_languaget:public languaget
     return true;
   }
 
+  virtual std::set<std::string> extensions() const override
+  {
+    return {"json_symtab"};
+  }
+
   languaget *new_language() override
   {
     return new json_symtab_languaget();
@@ -45,5 +50,10 @@ class json_symtab_languaget:public languaget
  protected:
   jsont parsed_json_file;
 };
+
+inline languaget *new_json_symtab_language()
+{
+  return new json_symtab_languaget();
+}
 
 #endif
