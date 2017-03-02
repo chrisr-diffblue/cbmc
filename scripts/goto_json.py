@@ -238,19 +238,31 @@ class goto_json(object):
     ret._id = constant
     return ret
 
-  def make_irep(self, schema_name, **kwargs):
+  def find_schema_id(self, schema):
+    if "id" in schema:
+      return schema["id"]
+    if "parent" in schema:
+      return self.find_schema_id(schema["parent"])
+    return ""
 
-    def find_id(schema):
-      if "id" in schema:
-        return schema["id"]
-      if "parent" in schema:
-        return find_id(schema["parent"])
-      return ""
+  def count_required_positional_operands(self, schema):
+    if "sub" not in schema:
+      return 0
+    n = 0
+    for s in schema["sub"]:
+      if "number" not in s:
+        n += 1
+    if schema["parent"] is None:
+      return n
+    else:
+      return max(n, self.count_required_positional_operands(schema["parent"]))
+
+  def make_irep(self, schema_name, **kwargs):
 
     schema = self.schemata[schema_name]
     ret = irep(schema_name, schema)
     # Apply any constants required by the schema:
-    ret._id = find_id(schema)
+    ret._id = self.find_schema_id(schema)
     if "namedSub" in schema:
       for (key, value) in schema["namedSub"].iteritems():
         if "constant" in value:
