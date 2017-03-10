@@ -1,7 +1,7 @@
 {
   "parent": "type",
-  "sub": [ { "schema": "struct_union_component", "number": "*", "friendly_name": "component" } ],
   "namedSub": {
-    "tag": {"type": "string"}
+    "tag": {"type": "string"},
+    "components": {"schema": "struct_union_components"}
   }
 }

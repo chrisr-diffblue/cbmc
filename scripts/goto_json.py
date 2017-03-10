@@ -252,7 +252,7 @@ class goto_json(object):
     for s in schema["sub"]:
       if "number" not in s:
         n += 1
-    if schema["parent"] is None:
+    if "parent" not in schema:
       return n
     else:
       return max(n, self.count_required_positional_operands(schema["parent"]))
