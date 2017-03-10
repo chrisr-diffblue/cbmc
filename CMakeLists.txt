@@ -68,6 +68,7 @@ set_target_properties(
     jbmc-lib
     jsil
     json
+    json-symtab-language
     langapi
     linking
     miniBDD

@@ -11,8 +11,9 @@ Author: Chris Smowton, chris.smowton@diffblue.com
 #ifndef CPROVER_JSON_SYMTAB_LANGUAGE_JSON_SYMTAB_LANGUAGE_H
 #define CPROVER_JSON_SYMTAB_LANGUAGE_JSON_SYMTAB_LANGUAGE_H
 
-#include <util/language.h>
+#include <langapi/language.h>
 #include <util/json.h>
+#include <util/make_unique.h> // unique_ptr
 
 class json_symtab_languaget:public languaget
 {
@@ -20,6 +21,13 @@ class json_symtab_languaget:public languaget
   bool parse(
     std::istream &instream,
     const std::string &path) override;
+
+  bool generate_support_functions(
+    symbol_tablet &symbol_table) override
+  {
+    // Not implemented.
+    return true;
+  }
 
   bool typecheck(
     symbol_tablet &symbol_table,
@@ -42,18 +50,18 @@ class json_symtab_languaget:public languaget
     return {"json_symtab"};
   }
 
-  languaget *new_language() override
+  std::unique_ptr<languaget> new_language() override
   {
-    return new json_symtab_languaget();
+    return util_make_unique<json_symtab_languaget>();
   }
 
  protected:
   jsont parsed_json_file;
 };
 
-inline languaget *new_json_symtab_language()
+inline std::unique_ptr<languaget> new_json_symtab_language()
 {
-  return new json_symtab_languaget();
+  return util_make_unique<json_symtab_languaget>();
 }
 
 #endif
