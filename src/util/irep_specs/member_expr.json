@@ -1,5 +1,6 @@
 {
   "parent": "expr",
+  "id": "member",
   "sub": [
     {"schema": "expr", "friendly_name": "compound"}
   ],
