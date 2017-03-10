@@ -4,6 +4,5 @@
   },
   "comment": {
     "source_location": {"schema": "source_location"}
-  },
-  "trivial_subclass_ids": ["type"]
+  }
 }
