@@ -2,6 +2,6 @@
   "parent": "type_with_subtype",
   "id": "array",
   "namedSub": {
-    "size": {"type": "integer"}
+    "size": {"schema": "expr"}
   }
 }
