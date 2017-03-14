@@ -1,6 +1,7 @@
 {
   "namedSub": {
-    "type": {"schema": "type"}
+    "type": {"schema": "type"},
+    "range_check": {"type": "bool"}
   },
   "comment": {
     "source_location": {"schema": "source_location"}
