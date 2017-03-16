@@ -1,10 +1,10 @@
 {
   "parent": "type",
   "id": "code",
-  "sub": [ { "schema": "code_parameter", "number": "*", "friendly_name": "parameter" } ],
   "namedSub": {
     "ellipsis": {"type": "bool"},
-    "return_type": {"schema": "type"}
+    "return_type": {"schema": "type"},
+    "parameters": {"schema": "parameter_list"}
   },
   "comment": {
     "KnR": {"type": "bool"},

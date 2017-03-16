@@ -3,7 +3,7 @@
   "sub": [
     {"schema": "expr", "friendly_name": "lhs"},
     {"schema": "expr", "friendly_name": "function"},
-    {"schema": "argument_list", "friendly_name": "arugments"}
+    {"schema": "argument_list", "friendly_name": "arguments"}
   ],
   "namedSub": {
     "statement": {"constant": "function_call", "type": "string"}
