@@ -1,12 +1,8 @@
 {
   "parent": "struct_type",
   "namedSub": {
-    "methods": {
-      "sub": [ {"schema": "struct_union_component", "number": "*", "friendly_name": "method"} ]
-    },
-    "bases": {
-      "sub": [ {"schema": "base_expr", "number": "*", "friendly_name": "base" } ]
-    }
+    "methods": {"schema": "struct_union_components"},
+    "bases": {"schema": "base_list"}
   },
   "comment": {
     "class": {"constant": "1"}

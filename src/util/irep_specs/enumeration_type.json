@@ -1,8 +1,6 @@
 {
   "parent": "type",
   "namedSub": {
-    "elements": {
-      "sub": [ { "schema": "irep", "number": "*", "friendly_name": "element" } ]
-    }
+    "elements": {"schema": "element_list"}
   }
 }

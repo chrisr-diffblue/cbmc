@@ -2,8 +2,6 @@
   "parent": "type_with_subtype",
   "id": "c_enum",
   "namedSub": {
-    "body": {
-      "sub": [ { "schema": "c_enum_member", "number": "*", "friendly_name": "member" } ]
-    }
+    "body": {"schema": "c_enum_members"}
   }
 }
