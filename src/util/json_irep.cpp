@@ -98,24 +98,41 @@ void json_irept::convert_named_sub_tree(
 /// \return result - irep equivalent of input
 irept json_irept::convert_from_json(const jsont &in) const
 {
-  std::vector<std::string> have_keys;
-  for(const auto &keyval : in.object)
-    have_keys.push_back(keyval.first);
-  std::sort(have_keys.begin(), have_keys.end());
-  if(have_keys!=std::vector<std::string>{"comment", "id", "namedSub", "sub"})
-    throw "irep JSON representation is missing one of needed keys: "
-      "'id', 'sub', 'namedSub', 'comment'";
+  bool found_id=false;
+  for(const auto& keyval : in.object)
+  {
+    if(keyval.first=="id")
+      found_id=true;
+    else if(keyval.first!="sub" &&
+            keyval.first!="namedSub" &&
+            keyval.first!="comment")
+    {
+      throw "Found unexpected key in JSON input: '" + keyval.first + "'";
+    }
+  }
+
+  if(!found_id)
+    throw "Irep JSON representation must have a key 'id'";
 
   irept out(in["id"].value);
 
-  for(const auto &sub : in["sub"].array)
-    out.get_sub().push_back(convert_from_json(sub));
+  if(in.object.count("sub"))
+  {
+    for(const auto &sub : in["sub"].array)
+      out.get_sub().push_back(convert_from_json(sub));
+  }
 
-  for(const auto &named_sub : in["namedSub"].object)
-    out.add(named_sub.first)=convert_from_json(named_sub.second);
+  if(in.object.count("namedSub"))
+  {
+    for(const auto &named_sub : in["namedSub"].object)
+      out.add(named_sub.first)=convert_from_json(named_sub.second);
+  }
 
-  for(const auto &comment : in["comment"].object)
+  if(in.object.count("comment"))
+  {
+    for(const auto &comment : in["comment"].object)
     out.add(comment.first)=convert_from_json(comment.second);
+  }
 
   return out;
 }
