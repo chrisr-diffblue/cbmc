@@ -2,7 +2,7 @@
   "parent": "code",
   "sub": [
     {"schema": "expr", "friendly_name": "cond"},
-    {"schema": "code", "friendly_name": "body"}
+    {"schema": "code", "friendly_name": "loop_body"}
   ],
   "namedSub": {
     "statement": {"constant": "while", "type": "string"}

@@ -2,7 +2,7 @@
   "parent": "code",
   "sub": [
     {"schema": "expr", "friendly_name": "value"},
-    {"schema": "code", "friendly_name": "body"}
+    {"schema": "code", "friendly_name": "switch_body"}
   ],
   "namedSub": {
     "statement": {"constant": "switch", "type": "string"}

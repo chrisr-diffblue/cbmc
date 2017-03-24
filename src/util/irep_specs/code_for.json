@@ -4,7 +4,7 @@
     {"schema": "expr", "friendly_name": "init"},
     {"schema": "expr", "friendly_name": "cond"},
     {"schema": "expr", "friendly_name": "iter"},
-    {"schema": "code", "friendly_name": "body"}
+    {"schema": "code", "friendly_name": "loop_body"}
   ],
   "namedSub": {
     "statement": {"constant": "while", "type": "string"}
