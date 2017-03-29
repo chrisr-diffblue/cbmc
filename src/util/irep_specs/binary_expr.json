@@ -6,7 +6,7 @@
     "overflow_check": {"type": "bool"}
   },
   "trivial_subclass_ids": [
-    "+", "-", "*", "/", "**", "mod", "rem", "factorial_power",
+    "+", "-", "*", "**", "factorial_power",
     "=", "notequal", ">", "<", ">=", "<=", "complex", "implies",
     "bitor", "bitxor", "bitand", "shl", "ashr", "lshr",
     "ieee_float_equal", "ieee_float_notequal"
