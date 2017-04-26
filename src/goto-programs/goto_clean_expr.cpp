@@ -65,7 +65,8 @@ bool goto_convertt::needs_cleaning(const exprt &expr)
   if(expr.id()==ID_dereference ||
      expr.id()==ID_side_effect ||
      expr.id()==ID_compound_literal ||
-     expr.id()==ID_comma)
+     expr.id()==ID_comma ||
+     expr.id()==ID_let)
     return true;
 
   if(expr.id()==ID_index)
@@ -425,6 +426,11 @@ void goto_convertt::clean_expr(
     clean_expr_address_of(expr.op0(), dest, mode);
     return;
   }
+  else if(expr.id()==ID_let)
+  {
+    rewrite_let(expr, dest);
+    return;
+  }
 
   // TODO: evaluation order
 
@@ -538,4 +544,40 @@ void goto_convertt::remove_gcc_conditional_expression(
 
   // there might still be junk in expr.op2()
   clean_expr(expr, dest, mode);
+}
+
+/*******************************************************************\
+
+Function: goto_convertt::rewrite_let
+
+  Inputs:
+
+ Outputs:
+
+ Purpose:
+
+\*******************************************************************/
+
+void goto_convertt::rewrite_let(
+  exprt &expr,
+  goto_programt &dest)
+{
+  auxiliary_symbolt let_result;
+  let_result.type=expr.type();
+  let_result.is_state_var=true;
+  std::string base_name="let_result$"+std::to_string(++temporary_counter);
+  let_result.base_name=base_name;
+  let_result.pretty_name=let_result.base_name;
+  let_result.name=let_result.base_name;
+  new_name(let_result);
+  auto &let_expr=to_let_expr(expr);
+  code_blockt equivalent_block;
+  code_declt bound_declaration(let_expr.symbol());
+  equivalent_block.move_to_operands(bound_declaration);
+  code_assignt bound_assignment(let_expr.symbol(), let_expr.value());
+  equivalent_block.move_to_operands(bound_assignment);
+  code_assignt result_assignment(let_result.symbol_expr(), let_expr.where());
+  equivalent_block.move_to_operands(result_assignment);
+  expr=let_result.symbol_expr();
+  convert(equivalent_block, dest);
 }
