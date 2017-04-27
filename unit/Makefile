@@ -17,6 +17,7 @@ SRC += unit_tests.cpp \
        analyses/does_remove_const/is_type_at_least_as_const_as.cpp \
        analyses/variable-sensitivity/abstract_object/merge.cpp \
        analyses/variable-sensitivity/constant_abstract_value/merge.cpp \
+       analyses/variable-sensitivity/constant_array_abstract_object/merge.cpp \
        goto-programs/goto_trace_output.cpp \
        path_strategies.cpp \
        solvers/floatbv/float_utils.cpp \
