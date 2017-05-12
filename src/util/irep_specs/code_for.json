@@ -7,6 +7,6 @@
     {"schema": "code", "friendly_name": "loop_body"}
   ],
   "namedSub": {
-    "statement": {"constant": "while", "type": "string"}
+    "statement": {"constant": "for", "type": "string"}
   }
 }
