@@ -562,14 +562,15 @@ void goto_convertt::rewrite_let(
   exprt &expr,
   goto_programt &dest)
 {
-  auxiliary_symbolt let_result;
-  let_result.type=expr.type();
-  let_result.is_state_var=true;
-  std::string base_name="let_result$"+std::to_string(++temporary_counter);
-  let_result.base_name=base_name;
-  let_result.pretty_name=let_result.base_name;
-  let_result.name=let_result.base_name;
-  new_name(let_result);
+  symbolt &let_result=
+    get_fresh_aux_symbol(
+      expr.type(),
+      "",
+      "let_result",
+      source_locationt(),
+      irep_idt(),
+      symbol_table);
+
   auto &let_expr=to_let_expr(expr);
   code_blockt equivalent_block;
   code_declt bound_declaration(let_expr.symbol());
