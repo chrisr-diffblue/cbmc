@@ -2,6 +2,6 @@
   "parent": "expr",
   "sub": [ {"schema": "expr", "number": "*", "friendly_name": "op"} ],
   "trivial_subclass_ids": [
-    "and", "or", "comma"
+    "and", "or"
   ]
 }

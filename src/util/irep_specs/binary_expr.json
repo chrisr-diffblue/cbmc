@@ -9,6 +9,6 @@
     "+", "-", "*", "**", "factorial_power",
     "=", "notequal", ">", "<", ">=", "<=", "complex", "implies",
     "bitor", "bitxor", "bitand", "shl", "ashr", "lshr",
-    "ieee_float_equal", "ieee_float_notequal"
+    "ieee_float_equal", "ieee_float_notequal", "comma"
   ]
 }
