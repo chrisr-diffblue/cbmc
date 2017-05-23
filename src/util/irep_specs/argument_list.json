@@ -1,4 +1,0 @@
-{
-  "id": "arguments",
-  "sub": [ {"schema": "expr", "number": "*", "friendly_name": "argument"} ]
-}

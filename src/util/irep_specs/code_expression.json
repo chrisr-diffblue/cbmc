@@ -1,9 +1,0 @@
-{
-  "parent": "code",
-  "sub": [
-    {"schema": "expr", "friendly_name": "expression"}
-  ],
-  "namedSub":  {
-    "statement": {"constant": "expression", "type": "string"}
-  }
-}

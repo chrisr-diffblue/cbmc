@@ -1,8 +1,0 @@
-{
-  "parent": "expr",
-  "id": "replication",
-  "sub": [
-    {"schema": "expr", "friendly_name": "times"},
-    {"schema": "expr", "friendly_name": "to_replicate"}
-  ]
-}

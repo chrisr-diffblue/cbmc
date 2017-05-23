@@ -1,8 +1,0 @@
-{
-  "parent": "expr",
-  "id": "side_effect",
-  "namedSub": {
-    "statement": {"constant": "cpp_new[]"},
-    "size": {"schema": "expr"}
-  }
-}

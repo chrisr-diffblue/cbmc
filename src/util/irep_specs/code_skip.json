@@ -1,6 +1,0 @@
-{
-  "parent": "code",
-  "namedSub": {
-    "statement": {"constant": "skip"}
-  }
-}

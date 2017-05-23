@@ -1,5 +1,0 @@
-{
-  "parent": "expr",
-  "id": "vector",
-  "sub": [ { "schema": "expr", "number": "*" } ]
-}

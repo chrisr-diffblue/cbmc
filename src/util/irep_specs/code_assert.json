@@ -1,9 +1,0 @@
-{
-  "parent": "code",
-  "sub": [
-    {"schema": "expr", "friendly_name": "assertion"}
-  ],
-  "namedSub": {
-    "statement": {"constant": "assert", "type": "string"}
-  }
-}

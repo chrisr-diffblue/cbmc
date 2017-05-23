@@ -1,6 +1,0 @@
-{
-  "parent": "type",
-  "sub": [
-    { "schema": "type", "friendly_name": "subtype" }
-  ]
-}
