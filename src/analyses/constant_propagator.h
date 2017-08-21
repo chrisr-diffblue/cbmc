@@ -39,6 +39,11 @@ public:
     locationt from,
     locationt to);
 
+  virtual std::vector<symbol_exprt> get_modified_symbols(const constant_propagator_domaint &other) const
+  {
+    return std::vector<symbol_exprt>();
+  }
+
   virtual bool ai_simplify(
     exprt &condition,
     const namespacet &ns) const final override;
