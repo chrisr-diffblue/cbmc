@@ -108,6 +108,15 @@ public:
   /// Simplifies the expression but keeps it as an l-value
   virtual bool ai_simplify_lhs(exprt &condition, const namespacet &ns) const;
 
+  virtual void merge_three_way_function_return(
+    const ai_domain_baset &function_start,
+    const ai_domain_baset &function_end,
+    const namespacet &ns)
+  {
+    // Do nothing - the result of the merge is to take
+    // all the changes in the "remote" version
+  }
+
   /// Gives a Boolean condition that is true for all values represented by the
   /// domain.  This allows domains to be converted into program invariants.
   virtual exprt to_predicate(void) const
