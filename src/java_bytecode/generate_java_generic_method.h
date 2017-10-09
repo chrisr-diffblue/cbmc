@@ -27,7 +27,7 @@ public:
 
   generate_java_generic_methodt(message_handlert &message_handler);
 
-  symbolt& operator()(
+  const symbolt& operator()(
     const symbolt &generic_method,
     const type_variable_instantiationst &concrete_types,
     symbol_tablet &symbol_table) const;

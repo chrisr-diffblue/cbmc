@@ -63,7 +63,7 @@ SCENARIO(
       THEN("Specialise the method into a method with a concrete return type")
       {
         const symbolt &method_symbol=
-          new_symbol_table.lookup(
+          *new_symbol_table.lookup(
             "java::generics$bound_element.f:()Ljava/lang/Number;");
         const typet &symbol_type=method_symbol.type;
 
@@ -78,7 +78,7 @@ SCENARIO(
         REQUIRE(type_var.get_identifier()==
                 "java::generics$bound_element::NUM");
 
-        const symbolt &concrete_type_sym=new_symbol_table.lookup(
+        const symbolt &concrete_type_sym=*new_symbol_table.lookup(
           "java::java.lang.Integer");
         symbol_typet concrete_type=symbol_typet("java::java.lang.Integer");
         concrete_type.set(ID_C_base_name, concrete_type_sym.base_name);
@@ -87,7 +87,7 @@ SCENARIO(
           concrete_types{
           {symbol_typet("java::generics$bound_element::NUM"),concrete_type}
         };
-        symbolt &specialized_method=instantiate_generic_method(
+        const symbolt &specialized_method=instantiate_generic_method(
           method_symbol,
           concrete_types,
           new_symbol_table);
@@ -107,13 +107,13 @@ SCENARIO(
              "types")
       {
         const symbolt &generic_method_symbol=
-          new_symbol_table.
+          *new_symbol_table.
             lookup("java::generics$bound_element.g:(Ljava/lang/Number;)V");
 
         REQUIRE(generic_method_symbol.type.id()==ID_code);
 
         // Pick a concrete type
-        const symbolt &concrete_type_sym=new_symbol_table.lookup(
+        const symbolt &concrete_type_sym=*new_symbol_table.lookup(
           "java::java.lang.Integer");
         symbol_typet concrete_type=symbol_typet("java::java.lang.Integer");
         concrete_type.set(ID_C_base_name, concrete_type_sym.base_name);
@@ -122,7 +122,7 @@ SCENARIO(
           concrete_types{
             {symbol_typet("java::generics$bound_element::NUM"),concrete_type}
             };
-        symbolt &specialized_method=instantiate_generic_method(
+        const symbolt &specialized_method=instantiate_generic_method(
           generic_method_symbol,
           concrete_types,
           new_symbol_table);
@@ -142,7 +142,7 @@ SCENARIO(
              "types")
       {
         const symbolt &generic_method_symbol=
-          new_symbol_table.
+          *new_symbol_table.
             lookup("java::generics$double_element.insert:(Ljava/lang/Object;Ljava/lang/Object;)V");
 
         REQUIRE(generic_method_symbol.type.id()==ID_code);
@@ -160,7 +160,7 @@ SCENARIO(
           {symbol_typet("java::generics$double_element::B"),
             concrete_double_type}
         };
-        symbolt &specialized_method=instantiate_generic_method(
+        const symbolt &specialized_method=instantiate_generic_method(
           generic_method_symbol,
           concrete_types,
           new_symbol_table);
@@ -179,7 +179,7 @@ SCENARIO(
              "parameters")
       {
         const symbolt &generic_method_symbol=
-          new_symbol_table.
+          *new_symbol_table.
             lookup("java::generics$double_element.setMap:(Ljava/util/Map;)V");
 
         REQUIRE(generic_method_symbol.type.id()==ID_code);
@@ -192,7 +192,7 @@ SCENARIO(
             {symbol_typet("java/util/Map<TA;TB;>::B"),
               symbol_typet("java::java.lang.Double")}
         };
-        symbolt &specialized_method=instantiate_generic_method(
+        const symbolt &specialized_method=instantiate_generic_method(
           generic_method_symbol,
           concrete_types,
           new_symbol_table);
@@ -210,7 +210,7 @@ SCENARIO(
       THEN("Specialise a method with a compound generic parameter type")
       {
         const symbolt &generic_method_symbol=
-          new_symbol_table.
+          *new_symbol_table.
             lookup("java::generics$compound_element.setElem:(Ljava/util/List;)V");
 
         REQUIRE(generic_method_symbol.type.id()==ID_code);
@@ -225,7 +225,7 @@ SCENARIO(
           {symbol_typet("java/util/List<TB;>::B"),
             concrete_integer_type}
         };
-        symbolt &specialized_method=instantiate_generic_method(
+        const symbolt &specialized_method=instantiate_generic_method(
           generic_method_symbol,
           concrete_types,
           new_symbol_table);
@@ -244,7 +244,7 @@ SCENARIO(
       THEN("Specialise a method with a bound compound generic parameter type")
       {
         const symbolt &generic_method_symbol=
-          new_symbol_table.
+          *new_symbol_table.
             lookup("java::generics$compound_element.setFixedElem:"
                      "(Ljava/util/List;)V");
 
@@ -260,7 +260,7 @@ SCENARIO(
           {symbol_typet("java/util/List<TB;>::B"),
             concrete_integer_type}
         };
-        symbolt &specialized_method=instantiate_generic_method(
+        const symbolt &specialized_method=instantiate_generic_method(
           generic_method_symbol,
           concrete_types,
           new_symbol_table);
@@ -278,7 +278,7 @@ SCENARIO(
       THEN("Specialise a method with a compound generic return type")
       {
         const symbolt &generic_method_symbol=
-          new_symbol_table.
+          *new_symbol_table.
             lookup("java::generics$compound_element.getElem:()"
                      "Ljava/util/List;");
 
@@ -294,7 +294,7 @@ SCENARIO(
           {symbol_typet("java/util/List<TB;>::B"),
             concrete_integer_type}
         };
-        symbolt &specialized_method=instantiate_generic_method(
+        const symbolt &specialized_method=instantiate_generic_method(
           generic_method_symbol,
           concrete_types,
           new_symbol_table);

@@ -26,7 +26,7 @@ generate_java_generic_methodt::generate_java_generic_methodt(
 /// be inserted.
 /// \return The symbol that was inserting into the symbol_table, or the existing
 /// symbol if the method has already been specialized.
-symbolt& generate_java_generic_methodt::operator()(
+const symbolt& generate_java_generic_methodt::operator()(
   const symbolt &generic_method,
   const type_variable_instantiationst &concrete_types,
   symbol_tablet &symbol_table) const
@@ -53,8 +53,9 @@ symbolt& generate_java_generic_methodt::operator()(
     (concrete_types);
 
   // Check the method has not already been specialized
-  const auto &already_specialized=symbol_table.symbols.find(
-    id2string(generic_method.name)+signature_decoration);
+  symbol_tablet::symbolst::const_iterator already_specialized=
+    symbol_table.symbols.find(
+      id2string(generic_method.name)+signature_decoration);
   if(already_specialized!=symbol_table.symbols.end())
     return already_specialized->second;
 
@@ -154,7 +155,7 @@ symbolt& generate_java_generic_methodt::operator()(
     throw "Specialized method symbol already exists";
   }
 
-  return symbol_table.lookup(specialized_method.name);
+  return *symbol_table.lookup(specialized_method.name);
 }
 
 
