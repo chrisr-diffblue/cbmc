@@ -47,19 +47,8 @@ public class generics {
     }
   }
 
-  class int_element<B> {
-  	double_element<Integer,B> intPair;
-
-  	void insert(Integer i,B b) {
-  		intPair.insert(i,b);
-  	}
-  }
-
   class compound_element<B> {
     java.util.List<B> elem;
-    void setElem(java.util.List<B> e) {
-      elem=e;
-    }
 
     void setFixedElem(java.util.List<Integer> e) {
       elem=null;
