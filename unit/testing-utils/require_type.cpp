@@ -119,13 +119,22 @@ bool require_java_generic_parametert_expectation(
   return false;
 }
 
+/// Verify a given type is a java_generic_type
+/// \param type The type to check
+/// \return The type, cast to a java_generic_typet
+java_generic_typet require_type::require_java_generic_type(const typet &type)
+{
+  REQUIRE(is_java_generic_type(type));
+  return to_java_generic_type(type);
+}
 
 /// Verify a given type is a java_generic_type, optionally checking
 /// that it's associated type variables match a given set of identifiers.
 /// Expected usage is something like this:
 ///
 /// require_java_generic_type(type,
-///                          {{Inst,"java::java.lang.Integer"},{Var,"T"}})
+///   {{require_type::type_parameter_kindt::Inst, "java::java.lang.Integer"},
+///    {require_type::type_parameter_kindt::Var, "T"}})
 ///
 /// \param type The type to check
 /// \param type_expectations An optional set of type variable kinds
@@ -134,35 +143,45 @@ bool require_java_generic_parametert_expectation(
 /// \return The given type, cast to a java_generic_typet
 java_generic_typet require_type::require_java_generic_type(
   const typet &type,
-  const optionalt<require_type::expected_type_parameterst> &type_expectations)
+  const require_type::expected_type_parameterst &type_expectations)
 {
-  REQUIRE(is_java_generic_type(type));
-  const java_generic_typet &generic_type=to_java_generic_type(type);
-  if(type_expectations)
-  {
-    const java_generic_typet::generic_type_variablest &generic_type_vars=
-      generic_type.generic_type_variables();
-    REQUIRE(generic_type_vars.size()==type_expectations->size());
-    REQUIRE(
-      std::equal(
-        generic_type_vars.begin(),
-        generic_type_vars.end(),
-        type_expectations->begin(),
-        require_java_generic_parametert_expectation));
-  }
+  const java_generic_typet &generic_type=
+    require_type::require_java_generic_type(type);
+
+  const java_generic_typet::generic_type_variablest &generic_type_vars=
+    generic_type.generic_type_variables();
+  REQUIRE(generic_type_vars.size()==type_expectations.size());
+  REQUIRE(
+    std::equal(
+      generic_type_vars.begin(),
+      generic_type_vars.end(),
+      type_expectations.begin(),
+      require_java_generic_parametert_expectation));
 
   return generic_type;
+}
+
+/// Verify a given type is a java_generic_parameter
+/// \param type The type to check
+/// \return The type, cast to a java_generic_parametert
+java_generic_parametert require_type::require_java_generic_parameter(
+  const typet &type)
+{
+  REQUIRE(is_java_generic_parameter(type));
+  return to_java_generic_parameter(type);
 }
 
 /// Verify a given type is a java_generic_parameter, optionally checking
 /// that it's associated type variables match a given set of expectations.
 /// Expected usage is something like this:
 ///
-/// require_java_generic_parameter(parameter, {Inst,"java::java.lang.Integer"})
+/// require_java_generic_parameter(parameter,
+///     {require_type::type_parameter_kindt::Inst,"java::java.lang.Integer"})
 ///
 /// or
 ///
-/// require_java_generic_parameter(parameter, {Var,"T"})
+/// require_java_generic_parameter(parameter,
+///     {require_type::type_parameter_kindt::Var,"T"})
 ///
 /// \param type The type to check
 /// \param type_expectation An optional description of the identifiers/kinds
@@ -170,17 +189,15 @@ java_generic_typet require_type::require_java_generic_type(
 /// \return The given type, cast to a java_generic_parametert
 java_generic_parametert require_type::require_java_generic_parameter(
   const typet &type,
-  const optionalt<require_type::expected_type_parametert> &type_expectation)
+  const require_type::expected_type_parametert &type_expectation)
 {
-  REQUIRE(is_java_generic_parameter(type));
-  const java_generic_parametert &generic_param=to_java_generic_parameter(type);
-  if(type_expectation)
-  {
-    REQUIRE(
-      require_java_generic_parametert_expectation(
-        generic_param,
-        type_expectation.value()));
-  }
+  const java_generic_parametert &generic_param=
+    require_type::require_java_generic_parameter(type);
+
+  REQUIRE(
+    require_java_generic_parametert_expectation(
+      generic_param,
+      type_expectation));
 
   return generic_param;
 }

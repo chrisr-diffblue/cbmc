@@ -50,16 +50,21 @@ struct expected_type_parametert
 typedef std::initializer_list<expected_type_parametert>
   expected_type_parameterst;
 
+java_generic_typet require_java_generic_type(const typet &type);
+
 java_generic_typet require_java_generic_type(
   const typet &type,
-  const optionalt<require_type::expected_type_parameterst> &type_expectations);
+  const require_type::expected_type_parameterst &type_expectations);
 
+
+java_generic_parametert require_java_generic_parameter(const typet &type);
 
 java_generic_parametert require_java_generic_parameter(
   const typet &type,
-  const optionalt<require_type::expected_type_parametert> &type_expectation);
+  const require_type::expected_type_parametert &type_expectation);
 
-const typet &require_java_non_generic_type(
+
+  const typet &require_java_non_generic_type(
   const typet &type,
   const optionalt<symbol_typet> &expect_subtype);
 }
