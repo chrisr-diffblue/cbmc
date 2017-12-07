@@ -431,17 +431,17 @@ void variable_sensitivity_domaint::transform_function_call(
         {
           if(called_arg.type().id()==ID_pointer)
           {
-            sharing_ptrt<pointer_abstract_objectt> pointer_value=
-              std::dynamic_pointer_cast<const pointer_abstract_objectt>(
-                abstract_state.eval(called_arg, ns));
+            abstract_object_pointert pointer_value=
+              abstract_state.eval(called_arg, ns);
 
             assert(pointer_value);
 
             // Write top to the pointer
-            pointer_value->write_dereference(
+            pointer_value->write(
               abstract_state,
               ns,
               std::stack<exprt>(),
+              nil_exprt(),
               abstract_state.abstract_object_factory(
                 called_arg.type().subtype(), ns, true), false);
           }

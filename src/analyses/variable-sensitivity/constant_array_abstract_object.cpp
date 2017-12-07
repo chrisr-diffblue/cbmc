@@ -71,7 +71,7 @@ constant_array_abstract_objectt::constant_array_abstract_objectt(
   const exprt &expr,
   const abstract_environmentt &environment,
   const namespacet &ns):
-    array_abstract_objectt(expr, environment, ns)
+  array_abstract_objectt(expr, environment, ns)
 {
   if(expr.id()==ID_array)
   {
@@ -81,7 +81,7 @@ constant_array_abstract_objectt::constant_array_abstract_objectt(
       map[mp_integer(index)]=environment.eval(entry, ns);
       ++index;
     }
-    top=false;
+    clear_top();
   }
 }
 
@@ -193,16 +193,67 @@ void constant_array_abstract_objectt::output(
     {
       out << "[" << entry.first << "] = ";
       entry.second->output(out, ai, ns);
-
-      // Start outputting specific last_written_locations
-      out << " @ ";
-      output_last_written_locations(out,
-          entry.second->get_last_written_locations());
-
       out << "\n";
     }
     out << "}";
   }
+}
+
+/*******************************************************************\
+
+Function: constant_array_abstract_objectt::read
+
+  Inputs:
+   env - the abstract environment
+   specifier - a modifier expression, such as an array index or field specifier
+          used to indicate access to a specific component
+
+ Outputs: The abstract_objectt representing the value of that component. For
+          this default implementation, we just return `this`. Sub-classes are
+          expected to extend this implementation to match their behaviour.
+
+ Purpose: A helper function to evaluate an abstract object contained
+          within a container object. More precise abstractions may override this
+          to return more precise results.
+
+\*******************************************************************/
+abstract_object_pointert constant_array_abstract_objectt::read(
+  const abstract_environmentt &env,
+  const exprt &specifier,
+  const namespacet &ns) const
+{
+  return read_index(env, to_index_expr(specifier), ns);
+}
+
+/*******************************************************************\
+
+Function: constant_array_abstract_objectt::write
+
+  Inputs:
+   environment - the abstract environment
+   stack - the remaining stack of expressions on the LHS to evaluate
+   specifier - the expression uses to access a specific component
+   value - the value we are trying to write to the component
+
+ Outputs: The abstract_objectt representing the result of writing
+          to a specific component.
+
+ Purpose: A helper function to evaluate writing to a component of an
+          abstract object. More precise abstractions may override this to
+          update what they are storing for a specific component.
+
+\*******************************************************************/
+abstract_object_pointert constant_array_abstract_objectt::write(
+  abstract_environmentt &environment,
+  const namespacet &ns,
+  const std::stack<exprt> stack,
+  const exprt &specifier,
+  const abstract_object_pointert value,
+  bool merging_write) const
+{
+  return write_index(
+    environment, ns, stack, to_index_expr(specifier), value,
+    merging_write);
 }
 
 /*******************************************************************\
@@ -305,10 +356,11 @@ sharing_ptrt<array_abstract_objectt>
       {
         if(is_top())
         {
-          copy->top=false;
+          copy->clear_top();
         }
 
         copy->map[index_value]=value;
+
         return copy;
       }
       else
@@ -341,7 +393,7 @@ sharing_ptrt<array_abstract_objectt>
 
         if(is_top())
         {
-          copy->top=false;
+          copy->clear_top();
         }
         copy->map[index_value]=environment.write(
           array_entry, value, stack, ns, merging_write);
@@ -358,7 +410,7 @@ sharing_ptrt<array_abstract_objectt>
               array_entry.second, value, stack, ns, true);
           if(is_top())
           {
-            copy->top=false;
+            copy->clear_top();
           }
         }
 

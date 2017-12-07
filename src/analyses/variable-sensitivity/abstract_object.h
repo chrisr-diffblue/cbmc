@@ -31,6 +31,7 @@
 #include <map>
 #include <iosfwd>
 #include <algorithm>
+#include <stack>
 
 #include <goto-programs/goto_program.h>
 #include <util/expr.h>
@@ -98,6 +99,19 @@ public:
 
   virtual exprt to_constant() const;
 
+  virtual abstract_object_pointert read(
+    const abstract_environmentt &env,
+    const exprt &specifier,
+    const namespacet &ns) const;
+
+  virtual abstract_object_pointert write(
+    abstract_environmentt &environment,
+    const namespacet &ns,
+    const std::stack<exprt> stack,
+    const exprt &specifier,
+    const abstract_object_pointert value,
+    bool merging_write) const;
+
   virtual void output(
     std::ostream &out, const class ai_baset &ai, const namespacet &ns) const;
 
@@ -114,24 +128,36 @@ public:
     abstract_object_pointert op2,
     bool &out_modifications);
 
-  abstract_object_pointert update_last_written_locations(
+  virtual abstract_object_pointert update_last_written_locations(
       const locationst &locations,
       const bool update_sub_elements) const;
-  locationst get_last_written_locations() const;
+  virtual locationst get_last_written_locations() const;
 
-  static void output_last_written_locations(
-    std::ostream &out,
-    const abstract_objectt::locationst &locations);
+  // The one exception is merge in descendant classes, which needs this
+  virtual void make_top() { top=true; }
+  virtual void clear_top() { top=false; }
+
+  // Const versions must perform copy-on-write
+  abstract_object_pointert make_top() const {
+    if (is_top()) return shared_from_this();
+    internal_abstract_object_pointert clone = mutable_clone();
+    clone->make_top();
+    return clone;
+  };
+
+  abstract_object_pointert clear_top() const {
+    if(!is_top()) return shared_from_this();
+    internal_abstract_object_pointert clone = mutable_clone();
+    clone->clear_top();
+    return clone;
+  };
 
 private:
   // To enforce copy-on-write these are private and have read-only accessors
   typet t;
   bool bottom;
-  locationst last_written_locations;
+  bool top;
 
-  abstract_object_pointert abstract_object_merge(
-    const abstract_object_pointert other) const;
-  locationst get_location_union(const locationst &locations) const;
 protected:
   template<class T>
   using internal_sharing_ptrt=std::shared_ptr<T>;
@@ -145,15 +171,13 @@ protected:
     return internal_abstract_object_pointert(new abstract_objectt(*this));
   }
 
-  void set_last_written_locations(const locationst &locations);
+  virtual void set_last_written_locations(const locationst &locations);
 
   virtual void update_sub_elements(const locationst &locations)
   {}
 
-  bool top;
-
-  // The one exception is merge in descendant classes, which needs this
-  void make_top() { top=true; }
+  virtual abstract_object_pointert abstract_object_merge(
+    const abstract_object_pointert other) const;
 
   bool should_use_base_merge(const abstract_object_pointert other) const;
 

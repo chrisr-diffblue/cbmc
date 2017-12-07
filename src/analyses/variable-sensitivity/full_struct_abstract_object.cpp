@@ -89,6 +89,64 @@ full_struct_abstract_objectt::full_struct_abstract_objectt(
 
 /*******************************************************************\
 
+Function: full_struct_abstract_objectt::read
+
+  Inputs:
+   env - the abstract environment
+   specifier - a modifier expression, such as an array index or field specifier
+          used to indicate access to a specific component
+
+ Outputs: The abstract_objectt representing the value of that component. For
+          this default implementation, we just return `this`. Sub-classes are
+          expected to extend this implementation to match their behaviour.
+
+ Purpose: A helper function to evaluate an abstract object contained
+          within a container object. More precise abstractions may override this
+          to return more precise results.
+
+\*******************************************************************/
+abstract_object_pointert full_struct_abstract_objectt::read(
+  const abstract_environmentt &env,
+  const exprt &specifier,
+  const namespacet &ns) const
+{
+  return read_component(env, to_member_expr(specifier),
+                        ns);
+}
+
+/*******************************************************************\
+
+Function: full_struct_abstract_objectt::write
+
+  Inputs:
+   environment - the abstract environment
+   stack - the remaining stack of expressions on the LHS to evaluate
+   specifier - the expression uses to access a specific component
+   value - the value we are trying to write to the component
+
+ Outputs: The abstract_objectt representing the result of writing
+          to a specific component.
+
+ Purpose: A helper function to evaluate writing to a component of an
+          abstract object. More precise abstractions may override this to
+          update what they are storing for a specific component.
+
+\*******************************************************************/
+abstract_object_pointert full_struct_abstract_objectt::write(
+  abstract_environmentt &environment,
+  const namespacet &ns,
+  const std::stack<exprt> stack,
+  const exprt &specifier,
+  const abstract_object_pointert value,
+  bool merging_write) const
+{
+  return write_component(environment, ns, stack, to_member_expr(specifier),
+                         value,
+                         merging_write);
+}
+
+/*******************************************************************\
+
 Function: struct_abstract_objectt::read_component
 
   Inputs:
@@ -185,8 +243,6 @@ sharing_ptrt<struct_abstract_objectt>
   internal_sharing_ptrt<full_struct_abstract_objectt> copy(
     new full_struct_abstract_objectt(*this));
 
-  copy->set_last_written_locations(value->get_last_written_locations());
-
   if(!stack.empty())
   {
     abstract_object_pointert starting_value;
@@ -204,7 +260,7 @@ sharing_ptrt<struct_abstract_objectt>
 
     copy->map[c]=
       environment.write(starting_value, value, stack, ns, merging_write);
-    copy->top=false;
+    copy->clear_top();
     assert(copy->verify());
     return copy;
   }
@@ -244,7 +300,7 @@ sharing_ptrt<struct_abstract_objectt>
     else
     {
       copy->map[c]=value;
-      copy->top=false;
+      copy->clear_top();
       assert(!copy->is_bottom());
     }
 
@@ -283,12 +339,6 @@ void full_struct_abstract_objectt::output(
     }
     out << "." << entry.first << "=";
     entry.second->output(out, ai, ns);
-
-    // Start outputting specific last_written_locations
-    out << " @ ";
-    output_last_written_locations(out,
-        entry.second->get_last_written_locations());
-
   }
   out << "}";
 }

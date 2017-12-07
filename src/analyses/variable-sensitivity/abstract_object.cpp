@@ -133,14 +133,14 @@ Function: abstract_objectt::abstract_object_merge
 abstract_object_pointert abstract_objectt::abstract_object_merge(
   const abstract_object_pointert other) const
 {
-  if(top)
+  if(is_top())
     return shared_from_this();
   if(other->bottom)
     return shared_from_this();
 
 
   internal_abstract_object_pointert merged=mutable_clone();
-  merged->top=true;
+  merged->make_top();
   merged->bottom=false;
   return merged;
 }
@@ -190,6 +190,61 @@ abstract_object_pointert abstract_objectt::expression_transform(
 
   exprt simplified=simplify_expr(constant_replaced_expr, ns);
   return environment.abstract_object_factory(simplified.type(), simplified, ns);
+}
+
+/*******************************************************************\
+
+Function: abstract_objectt::read
+
+  Inputs:
+   env - the abstract environment
+   specifier - a modifier expression, such as an array index or field specifier
+          used to indicate access to a specific component
+
+ Outputs: The abstract_objectt representing the value of that component. For
+          this default implementation, we just return `this`. Sub-classes are
+          expected to extend this implementation to match their behaviour.
+
+ Purpose: A helper function to evaluate an abstract object contained
+          within a container object. More precise abstractions may override this
+          to return more precise results.
+
+\*******************************************************************/
+abstract_object_pointert abstract_objectt::read(
+  const abstract_environmentt &env,
+  const exprt &specifier,
+  const namespacet &ns) const
+{
+  return shared_from_this();
+}
+
+/*******************************************************************\
+
+Function: abstract_objectt::write
+
+  Inputs:
+   environment - the abstract environment
+   stack - the remaining stack of expressions on the LHS to evaluate
+   specifier - the expression uses to access a specific component
+   value - the value we are trying to write to the component
+
+ Outputs: The abstract_objectt representing the result of writing
+          to a specific component.
+
+ Purpose: A helper function to evaluate writing to a component of an
+          abstract object. More precise abstractions may override this to
+          update what they are storing for a specific component.
+
+\*******************************************************************/
+abstract_object_pointert abstract_objectt::write(
+  abstract_environmentt &environment,
+  const namespacet &ns,
+  const std::stack<exprt> stack,
+  const exprt &specifier,
+  const abstract_object_pointert value,
+  bool merging_write) const
+{
+  return environment.abstract_object_factory(type(), ns, true);
 }
 
 /*******************************************************************\
@@ -310,15 +365,6 @@ abstract_object_pointert abstract_objectt::merge(
   // If no modifications, we will return the original pointer
   out_modifications=result!=op1;
 
-  locationst get_location_union = op1->get_location_union(
-      op2->get_last_written_locations());
-  // If the union is larger than the initial set, then update.
-  if(get_location_union.size() > op1->get_last_written_locations().size())
-  {
-    out_modifications=true;
-    result=result->update_last_written_locations(get_location_union, false);
-  }
-
   return result;
 }
 
@@ -364,33 +410,13 @@ abstract_object_pointert abstract_objectt::update_last_written_locations(
     bool update_sub_elements) const
 {
   internal_abstract_object_pointert clone=mutable_clone();
-  clone->set_last_written_locations(locations);
   if(update_sub_elements)
+  {
+    internal_abstract_object_pointert clone=mutable_clone();
     clone->update_sub_elements(locations);
-  return clone;
-}
-
-/*******************************************************************\
-
-Function: abstract_objectt::get_location_union
-
-  Inputs:
-   Set of locations unioned
-
- Outputs:
-   The union of the two sets
-
- Purpose: Takes the location set of the current object, and unions it
-          with the provided set.
-
-\*******************************************************************/
-
-abstract_objectt::locationst abstract_objectt::get_location_union(const locationst &locations) const
-{
-  locationst existing_locations=get_last_written_locations();
-  existing_locations.insert(locations.begin(), locations.end());
-
-  return existing_locations;
+    return clone;
+  }
+  return shared_from_this();
 }
 
 /*******************************************************************\
@@ -410,9 +436,7 @@ Function: abstract_objectt::set_last_written_locations
 \*******************************************************************/
 
 void abstract_objectt::set_last_written_locations(const locationst &locations)
-{
-  last_written_locations=locations;
-}
+{ }
 
 /*******************************************************************\
 
@@ -430,51 +454,8 @@ Function: abstract_objectt::get_last_written_locations
 
 abstract_objectt::locationst abstract_objectt::get_last_written_locations() const
 {
-  return last_written_locations;
+  return {};
 }
 
-/*******************************************************************\
 
-Function: abstract_objectt::output_last_written_location
-
-  Inputs:
-   object - the object to read information from
-   out - the stream to write to
-   ai - the abstract interpreter that contains this domain
-   ns - the current namespace
-
- Outputs: None
-
- Purpose: Print out all last written locations for a specified
-          object
-
-\*******************************************************************/
-
-void abstract_objectt::output_last_written_locations(
-  std::ostream &out,
-  const abstract_objectt::locationst &locations)
-{
-  out << "[";
-  bool comma=false;
-
-  std::set<unsigned> sorted_locations;
-  for(auto location: locations)
-  {
-    sorted_locations.insert(location->location_number);
-  }
-
-  for (auto location_number: sorted_locations)
-  {
-    if(!comma)
-    {
-      out << location_number;
-      comma=true;
-    }
-    else
-    {
-      out << ", " << location_number;
-    }
-  }
-  out << "]";
-}
 
