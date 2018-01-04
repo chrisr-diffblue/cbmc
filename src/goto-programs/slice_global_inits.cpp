@@ -29,7 +29,7 @@ void slice_global_inits(goto_modelt &goto_model)
 {
   // gather all functions reachable from the entry point
   call_grapht call_graph(goto_model);
-  const call_grapht::grapht &graph=call_graph.graph;
+  //const call_grapht::grapht &graph=call_graph.graph;
   goto_functionst &goto_functions=goto_model.goto_functions;
 
   std::unordered_set<irep_idt, irep_id_hash> functions_reached;
