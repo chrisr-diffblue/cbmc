@@ -78,9 +78,6 @@ public:
 
   virtual exprt to_constant() const override { return ao->to_constant(); }
 
-  virtual void make_top() override;
-  virtual void clear_top() override;
-
   virtual void output(
     std::ostream &out, const class ai_baset &ai, const namespacet &ns) const
   override;
@@ -88,6 +85,9 @@ public:
 
 protected:
   CLONE
+
+  virtual void make_top() override;
+  virtual void clear_top() override;
 
   // To enforce copy-on-write these are private and have read-only accessors
   abstract_objectt::locationst last_written_locations;

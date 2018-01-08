@@ -133,10 +133,6 @@ public:
       const bool update_sub_elements) const;
   virtual locationst get_last_written_locations() const;
 
-  // The one exception is merge in descendant classes, which needs this
-  virtual void make_top() { top=true; }
-  virtual void clear_top() { top=false; }
-
   // Const versions must perform copy-on-write
   abstract_object_pointert make_top() const {
     if (is_top()) return shared_from_this();
@@ -189,6 +185,10 @@ protected:
     const std::map<keyt, abstract_object_pointert> &map1,
     const std::map<keyt, abstract_object_pointert> &map2,
     std::map<keyt, abstract_object_pointert> &out_map);
+
+  // The one exception is merge in descendant classes, which needs this
+  virtual void make_top() { top=true; }
+  virtual void clear_top() { top=false; }
 };
 
 template<typename keyt>
