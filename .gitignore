@@ -18,6 +18,9 @@ src/.settings/*
 # Visual Studio
 Debug/*
 Release/*
+#CLion
+.idea
+cmake-build-debug
 
 # compilation files
 *.lo
