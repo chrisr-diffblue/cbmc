@@ -68,20 +68,9 @@ abstract_object_pointert abstract_environmentt::eval(
     member_exprt member_expr(to_member_expr(simplified_expr));
 
     const exprt &parent = member_expr.compound();
-    bool is_union = ns.follow(parent.type()).id() == ID_union;
 
-    if(is_union)
-    {
-      abstract_object_pointert union_abstract_object=eval(parent, ns);
-
-      return union_abstract_object->read(*this, member_expr, ns);
-    }
-    else
-    { // is struct
-      abstract_object_pointert struct_abstract_object=
-        eval(member_expr.compound(), ns);
-      return struct_abstract_object->read(*this, member_expr, ns);
-    }
+    abstract_object_pointert parent_abstract_object=eval(parent, ns);
+    return parent_abstract_object->read(*this, member_expr, ns);
   }
   else if(simplified_id==ID_address_of)
   {
@@ -302,10 +291,7 @@ abstract_object_pointert abstract_environmentt::write(
   // is inserted back into the map
   if(stack_head_id==ID_index)
   {
-    sharing_ptrt<abstract_objectt> array_abstract_object=
-      std::dynamic_pointer_cast<const abstract_objectt>(lhs);
-
-    return array_abstract_object->write(
+    return lhs->write(
         *this, ns, remaining_stack, to_index_expr(next_expr), rhs, merge_write);
   }
   else if(stack_head_id==ID_member)
@@ -317,38 +303,22 @@ abstract_object_pointert abstract_environmentt::write(
 
     if(is_union)
     {
-      sharing_ptrt<abstract_objectt> union_abstract_object=
-        std::dynamic_pointer_cast<const abstract_objectt>(lhs);
-
-      sharing_ptrt<abstract_objectt> modified_union=
-        union_abstract_object->write(
-          *this, ns, remaining_stack, member_expr, rhs, merge_write);
-
-      return modified_union;
+      return lhs->write(
+        *this, ns, remaining_stack, member_expr, rhs, merge_write);
     }
     else
     {
-      sharing_ptrt<abstract_objectt> struct_abstract_object=
-        std::dynamic_pointer_cast<const abstract_objectt>(lhs);
-
+      // FIXME: Why does this use next_member when the union branch above
+      // FIXME: uses member_expr?
       const member_exprt next_member_expr(to_member_expr(next_expr));
-      sharing_ptrt<abstract_objectt> modified_struct=
-        struct_abstract_object->write(
+      return lhs->write(
           *this, ns, remaining_stack, next_member_expr, rhs, merge_write);
-
-      return modified_struct;
     }
   }
   else if(stack_head_id==ID_dereference)
   {
-    sharing_ptrt<abstract_objectt> pointer_abstract_object=
-      std::dynamic_pointer_cast<const abstract_objectt>(lhs);
-
-    sharing_ptrt<abstract_objectt> modified_pointer=
-      pointer_abstract_object->write(
+    return lhs->write(
         *this, ns, remaining_stack, nil_exprt(), rhs, merge_write);
-
-    return modified_pointer;
   }
   else
   {
