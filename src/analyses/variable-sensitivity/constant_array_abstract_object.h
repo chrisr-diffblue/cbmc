@@ -51,18 +51,18 @@ public:
 protected:
   CLONE
 
-  virtual abstract_object_pointert read_index(
+  abstract_object_pointert read_index(
     const abstract_environmentt &env,
     const index_exprt &index,
-    const namespacet &ns) const override;
+    const namespacet &ns) const;
 
-  virtual sharing_ptrt<array_abstract_objectt> write_index(
+  sharing_ptrt<array_abstract_objectt> write_index(
     abstract_environmentt &environment,
     const namespacet &ns,
     const std::stack<exprt> stack,
     const index_exprt &index_expr,
     const abstract_object_pointert value,
-    bool merging_write) const override;
+    bool merging_write) const;
 
   virtual abstract_object_pointert merge(
     abstract_object_pointert other) const override;
