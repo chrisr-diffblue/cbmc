@@ -12,9 +12,6 @@
 #include "dependency_context_abstract_object.h"
 #include "full_struct_abstract_object.h"
 
-class ai_baset;
-
-
 void dependency_context_abstract_objectt::set_child(
   const abstract_object_pointert &child)
 {
