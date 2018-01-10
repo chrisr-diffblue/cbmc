@@ -82,16 +82,8 @@ public:
     std::ostream &out, const class ai_baset &ai, const namespacet &ns) const
   override;
 
-
 protected:
   CLONE
-
-  virtual void make_top() override;
-  virtual void clear_top() override;
-
-  // To enforce copy-on-write these are private and have read-only accessors
-  abstract_objectt::locationst last_written_locations;
-  abstract_object_pointert ao;
 
   virtual abstract_object_pointert merge(
     abstract_object_pointert other) const override ;
@@ -121,6 +113,14 @@ protected:
   static void output_last_written_locations(
     std::ostream &out,
     const abstract_objectt::locationst &locations);
+
+private:
+// To enforce copy-on-write these are private and have read-only accessors
+  abstract_objectt::locationst last_written_locations;
+  abstract_object_pointert ao;
+
+  virtual void make_top_internal() override;
+  virtual void clear_top_internal() override;
 };
 
 

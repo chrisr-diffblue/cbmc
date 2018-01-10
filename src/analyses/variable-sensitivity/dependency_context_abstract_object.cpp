@@ -18,15 +18,31 @@ void dependency_context_abstract_objectt::set_child(
   ao = child;
 }
 
-void dependency_context_abstract_objectt::make_top()
+void dependency_context_abstract_objectt::make_top_internal()
 {
-  abstract_objectt::make_top();
+  // abstract_objectt::make_top() should be the only caller of this hook,
+  // and that should already have made 'this' be top
+  //FIXME: INVARIANT(
+  //FIXME:  is_top(),
+  //FIXME:  "make_top_internal should only be called by abstract_objectt::make_top");
+  //FIXME:
+  //FIXME: Would be nice to get this re-enabled, but is_top is overidden and
+  //FIXME: returns the value for the child, not 'this'....
+
   if(!ao->is_top()) set_child(ao->make_top());
 }
 
-void dependency_context_abstract_objectt::clear_top()
+void dependency_context_abstract_objectt::clear_top_internal()
 {
-  abstract_objectt::clear_top();
+  // abstract_objectt::clear_top() should be the only caller of this hook,
+  // and that should already have cleared top on 'this'
+  //FIXME: INVARIANT(
+  //FIXME:   !is_top(),
+  //FIXME:   "clear_top_internal should only be called by abstract_objectt::clear_top");
+  //FIXME:
+  //FIXME: Would be nice to get this re-enabled, but is_top is overidden and
+  //FIXME: returns the value for the child, not 'this'....
+
   if(ao->is_top())set_child(ao->clear_top());
 }
 

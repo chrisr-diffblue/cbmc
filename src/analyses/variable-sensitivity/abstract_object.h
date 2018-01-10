@@ -154,6 +154,11 @@ private:
   bool bottom;
   bool top;
 
+  // Hooks to allow a sub-class to perform its own operations on
+  // setting/clearing top
+  virtual void make_top_internal() {}
+  virtual void clear_top_internal() {}
+
 protected:
   template<class T>
   using internal_sharing_ptrt=std::shared_ptr<T>;
@@ -187,8 +192,8 @@ protected:
     std::map<keyt, abstract_object_pointert> &out_map);
 
   // The one exception is merge in descendant classes, which needs this
-  virtual void make_top() { top=true; }
-  virtual void clear_top() { top=false; }
+  void make_top() { top=true; this->make_top_internal(); }
+  void clear_top() { top=false; this->clear_top_internal(); }
 };
 
 template<typename keyt>
