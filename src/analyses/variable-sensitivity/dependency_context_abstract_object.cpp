@@ -78,10 +78,6 @@ abstract_object_pointert
   return result;
 }
 
-void dependency_context_abstract_objectt::update_sub_elements(
-  const abstract_objectt::locationst &locations)
-{}
-
 /*******************************************************************\
 
 Function: dependency_context_abstract_objectt::get_last_written_locations

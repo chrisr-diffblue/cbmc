@@ -65,8 +65,6 @@ public:
 
   locationst get_location_union(const locationst &locations) const;
 
-  virtual void update_sub_elements(const locationst &locations) override;
-
   virtual const typet &type() const { return ao->type(); }
   virtual bool is_top() const override { return ao->is_top(); }
   virtual bool is_bottom() const override { return ao->is_bottom(); }
