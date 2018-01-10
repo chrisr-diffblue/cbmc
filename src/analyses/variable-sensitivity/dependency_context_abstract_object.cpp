@@ -150,15 +150,20 @@ abstract_object_pointert dependency_context_abstract_objectt::write(
   const abstract_object_pointert value,
   bool merging_write) const
 {
+  // But delegate the write to the child
+  abstract_object_pointert updated_child=
+    ao->write(environment, ns, stack, specifier, value, merging_write);
+
+  // Only perform the update if the child has in fact changed
+  if(updated_child == ao)
+    return shared_from_this();
+
+
   // Need to ensure the result of the write is still wrapped in a dependency
   // context
   const auto &result=
     std::dynamic_pointer_cast<dependency_context_abstract_objectt>(
       mutable_clone());
-
-  // But delegate the write to the child
-  abstract_object_pointert updated_child=
-    ao->write(environment, ns, stack, specifier, value, merging_write);
 
   result->set_child(updated_child);
 
