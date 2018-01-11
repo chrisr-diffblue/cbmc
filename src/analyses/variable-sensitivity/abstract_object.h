@@ -167,6 +167,11 @@ private:
   virtual void make_top_internal() {}
   virtual void clear_top_internal() {}
 
+  // Hook for a subclass to perform any additional operations as
+  // part of an abstract_object_merge
+  virtual abstract_object_pointert abstract_object_merge_internal(
+    const abstract_object_pointert other) const;
+
 protected:
   template<class T>
   using internal_sharing_ptrt=std::shared_ptr<T>;
@@ -185,7 +190,7 @@ protected:
   virtual void update_sub_elements(const locationst &locations)
   {}
 
-  virtual abstract_object_pointert abstract_object_merge(
+  abstract_object_pointert abstract_object_merge(
     const abstract_object_pointert other) const;
 
   bool should_use_base_merge(const abstract_object_pointert other) const;

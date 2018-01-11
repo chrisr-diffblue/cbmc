@@ -133,16 +133,37 @@ Function: abstract_objectt::abstract_object_merge
 abstract_object_pointert abstract_objectt::abstract_object_merge(
   const abstract_object_pointert other) const
 {
-  if(is_top())
-    return shared_from_this();
-  if(other->bottom)
-    return shared_from_this();
-
+  if(is_top() || other->bottom)
+    return this->abstract_object_merge_internal(other);
 
   internal_abstract_object_pointert merged=mutable_clone();
   merged->make_top();
   merged->bottom=false;
-  return merged;
+  return merged->abstract_object_merge_internal(other);
+}
+
+/*******************************************************************\
+
+Function: abstract_objectt::abstract_object_merge_internal
+
+  Inputs:
+   other - The object to merge with this
+
+ Outputs: Returns the result of the abstract object.
+
+ Purpose: Create a new abstract object that is the result of the merge, unless
+          the object would be unchanged, then would return itself. The default
+          abstract_objectt::abstract_object_merge calls this immediately prior
+          to returning, so it's activities will already have happened, and
+          this function gives the ability to perform additional work
+          for a merge.
+
+\*******************************************************************/
+abstract_object_pointert abstract_objectt::abstract_object_merge_internal(
+  const abstract_object_pointert other) const
+{
+  // Default implementation
+  return shared_from_this();
 }
 
 /*******************************************************************\

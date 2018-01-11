@@ -92,9 +92,6 @@ protected:
   virtual abstract_object_pointert merge(
     abstract_object_pointert other) const override ;
 
-  virtual abstract_object_pointert abstract_object_merge(
-    const abstract_object_pointert other) const override;
-
   virtual void set_last_written_locations(
     const abstract_objectt::locationst &locations) override;
 
@@ -127,6 +124,9 @@ private:
   // actions when an abstract_object is set/unset to TOP
   virtual void make_top_internal() override;
   virtual void clear_top_internal() override;
+
+  virtual abstract_object_pointert abstract_object_merge_internal(
+    const abstract_object_pointert other) const override;
 };
 
 

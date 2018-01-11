@@ -231,7 +231,7 @@ abstract_object_pointert dependency_context_abstract_objectt::merge(
 
 /*******************************************************************\
 
-Function: dependency_context_abstract_objectt::abstract_object_merge
+Function: dependency_context_abstract_objectt::abstract_object_merge_internal
 
   Inputs:
    other - The object to merge with this
@@ -239,26 +239,28 @@ Function: dependency_context_abstract_objectt::abstract_object_merge
  Outputs: Returns the result of the abstract object.
 
  Purpose: Create a new abstract object that is the result of the merge, unless
-          the object would be unchanged, then would return itself.
+          the object would be unchanged, then would return itself. The default
+          abstract_objectt::abstract_object_merge calls this immediately prior
+          to returning, so it's activities will already have happened, and
+          this function gives the ability to perform additional work
+          for a merge.
 
 \*******************************************************************/
 
 abstract_object_pointert
-  dependency_context_abstract_objectt::abstract_object_merge(
+  dependency_context_abstract_objectt::abstract_object_merge_internal(
     const abstract_object_pointert other) const
 {
-  // FIXME: This looks really sniffy and quite error prone - still needed???
-  abstract_object_pointert result =
-    this->abstract_objectt::abstract_object_merge(other);
-
   abstract_objectt::locationst location_union = get_location_union(
       other->get_last_written_locations());
+
   // If the union is larger than the initial set, then update.
   if(location_union.size() > get_last_written_locations().size())
   {
-    result=result->update_last_written_locations(location_union, false);
+    abstract_object_pointert result = mutable_clone();
+    return result->update_last_written_locations(location_union, false);
   }
-  return result;
+  return shared_from_this();
 }
 
 /*******************************************************************\
