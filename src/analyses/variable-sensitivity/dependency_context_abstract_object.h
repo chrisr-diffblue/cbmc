@@ -66,6 +66,25 @@ public:
     const abstract_objectt::locationst &locations,
     const bool update_sub_elements) const override;
 
+  /**
+   * A visitor class to update the last_written_locations of any visited
+   * abstract_object with a given set of locations.
+   */
+  class location_update_visitor:
+    public abstract_objectt::abstract_object_visitort
+  {
+  public:
+    explicit location_update_visitor(const locationst &locations):
+      locations(locations) { }
+
+    abstract_object_pointert visit(const abstract_object_pointert element) const
+    {
+      return element->update_last_written_locations(locations, true);
+    }
+
+    locationst locations;
+  };
+
   locationst get_location_union(const locationst &locations) const;
 
   virtual const typet &type() const { return child_abstract_object->type(); }

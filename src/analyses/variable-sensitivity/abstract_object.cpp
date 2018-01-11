@@ -430,12 +430,6 @@ abstract_object_pointert abstract_objectt::update_last_written_locations(
     const locationst &locations,
     bool update_sub_elements) const
 {
-  if(update_sub_elements)
-  {
-    internal_abstract_object_pointert clone=mutable_clone();
-    clone->update_sub_elements(locations);
-    return clone;
-  }
   return shared_from_this();
 }
 

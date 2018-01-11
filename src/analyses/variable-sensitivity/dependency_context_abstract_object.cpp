@@ -71,8 +71,14 @@ abstract_object_pointert
     std::dynamic_pointer_cast<dependency_context_abstract_objectt>(
       mutable_clone());
 
-  result->set_child(child_abstract_object->update_last_written_locations(
-    locations, update_sub_elements));
+  if(update_sub_elements)
+  {
+    abstract_object_pointert visited_child=
+      child_abstract_object->
+        update_last_written_locations(locations, update_sub_elements)->
+          visit_sub_elements(location_update_visitor(locations));
+    result->set_child(visited_child);
+  }
 
   result->set_last_written_locations(locations);
   return result;
