@@ -154,7 +154,8 @@ abstract_object_pointert dependency_context_abstract_objectt::write(
   abstract_object_pointert updated_child=
     child_abstract_object->write(environment, ns, stack, specifier, value, merging_write);
 
-  // Only perform an update if the write to the child has in fact changed it
+  // Only perform an update if the write to the child has in fact changed it...
+  // FIXME: But do we still want to record the write???
   if(updated_child == child_abstract_object)
     return shared_from_this();
 
@@ -164,17 +165,10 @@ abstract_object_pointert dependency_context_abstract_objectt::write(
     std::dynamic_pointer_cast<dependency_context_abstract_objectt>(
       mutable_clone());
 
+  // Update the child and record the updated write locations
   result->set_child(updated_child);
-
-  // This is a bit horrible, but not sure how to express this
-  // in a more general pattern without also pushing knowledge
-  // of last_written_location housekeeping into the other
-  // *_abstract_objectt classes.
-  if(std::dynamic_pointer_cast<const full_struct_abstract_objectt>
-    (updated_child))
-  {
-    result->set_last_written_locations(value->get_last_written_locations());
-  }
+  // FIXME: Should this be update_last_written_locations instead of set?
+  result->set_last_written_locations(value->get_last_written_locations());
 
   return result;
 }
@@ -253,6 +247,7 @@ abstract_object_pointert
   dependency_context_abstract_objectt::abstract_object_merge(
     const abstract_object_pointert other) const
 {
+  // FIXME: This looks really sniffy and quite error prone - still needed???
   abstract_object_pointert result =
     this->abstract_objectt::abstract_object_merge(other);
 
