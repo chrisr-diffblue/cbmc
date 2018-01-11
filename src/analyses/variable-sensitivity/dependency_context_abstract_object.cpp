@@ -15,7 +15,7 @@
 void dependency_context_abstract_objectt::set_child(
   const abstract_object_pointert &child)
 {
-  ao = child;
+  child_abstract_object = child;
 }
 
 void dependency_context_abstract_objectt::make_top_internal()
@@ -29,7 +29,7 @@ void dependency_context_abstract_objectt::make_top_internal()
   //FIXME: Would be nice to get this re-enabled, but is_top is overidden and
   //FIXME: returns the value for the child, not 'this'....
 
-  if(!ao->is_top()) set_child(ao->make_top());
+  if(!child_abstract_object->is_top()) set_child(child_abstract_object->make_top());
 }
 
 void dependency_context_abstract_objectt::clear_top_internal()
@@ -43,7 +43,7 @@ void dependency_context_abstract_objectt::clear_top_internal()
   //FIXME: Would be nice to get this re-enabled, but is_top is overidden and
   //FIXME: returns the value for the child, not 'this'....
 
-  if(ao->is_top())set_child(ao->clear_top());
+  if(child_abstract_object->is_top())set_child(child_abstract_object->clear_top());
 }
 
 /*******************************************************************\
@@ -71,7 +71,7 @@ abstract_object_pointert
     std::dynamic_pointer_cast<dependency_context_abstract_objectt>(
       mutable_clone());
 
-  result->set_child(ao->update_last_written_locations(
+  result->set_child(child_abstract_object->update_last_written_locations(
     locations, update_sub_elements));
 
   result->set_last_written_locations(locations);
@@ -121,7 +121,7 @@ abstract_object_pointert dependency_context_abstract_objectt::read(
   const namespacet &ns) const
 {
 
-  return ao->read(env, specifier, ns);
+  return child_abstract_object->read(env, specifier, ns);
 }
 
 /*******************************************************************\
@@ -152,12 +152,11 @@ abstract_object_pointert dependency_context_abstract_objectt::write(
 {
   // But delegate the write to the child
   abstract_object_pointert updated_child=
-    ao->write(environment, ns, stack, specifier, value, merging_write);
+    child_abstract_object->write(environment, ns, stack, specifier, value, merging_write);
 
-  // Only perform the update if the child has in fact changed
-  if(updated_child == ao)
+  // Only perform an update if the write to the child has in fact changed it
+  if(updated_child == child_abstract_object)
     return shared_from_this();
-
 
   // Need to ensure the result of the write is still wrapped in a dependency
   // context
@@ -204,7 +203,7 @@ abstract_object_pointert dependency_context_abstract_objectt::merge(
   {
     bool child_modified;
 
-    auto merged_child = abstract_objectt::merge(ao,cast_other->ao,
+    auto merged_child = abstract_objectt::merge(child_abstract_object,cast_other->child_abstract_object,
                                      child_modified);
 
     abstract_objectt::locationst location_union=get_location_union(
@@ -311,7 +310,7 @@ abstract_object_pointert
     const abstract_environmentt &environment,
     const namespacet &ns) const
 {
-  return ao->expression_transform(expr, environment, ns);
+  return child_abstract_object->expression_transform(expr, environment, ns);
 }
 
 /*******************************************************************\
@@ -333,7 +332,7 @@ Function: dependency_context_abstract_objectt::output
 void dependency_context_abstract_objectt::output(
   std::ostream &out, const ai_baset &ai, const namespacet &ns) const
 {
-  ao->output(out, ai, ns);
+  child_abstract_object->output(out, ai, ns);
 
   // Output last written locations immediately following the child output
   out << " @ ";

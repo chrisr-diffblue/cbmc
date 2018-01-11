@@ -29,7 +29,7 @@ public:
     const typet &type):
       abstract_objectt(type)
   {
-    ao = child;
+    child_abstract_object = child;
   }
 
   dependency_context_abstract_objectt(
@@ -39,7 +39,7 @@ public:
     bool bottom):
       abstract_objectt(type, top, bottom)
   {
-    ao = child;
+    child_abstract_object = child;
   }
 
   explicit dependency_context_abstract_objectt(
@@ -49,7 +49,7 @@ public:
     const namespacet &ns):
       abstract_objectt(expr, environment, ns)
   {
-    ao = child;
+    child_abstract_object = child;
   }
 
   virtual ~dependency_context_abstract_objectt() {}
@@ -65,21 +65,24 @@ public:
 
   locationst get_location_union(const locationst &locations) const;
 
-  virtual const typet &type() const { return ao->type(); }
-  virtual bool is_top() const override { return ao->is_top(); }
-  virtual bool is_bottom() const override { return ao->is_bottom(); }
+  virtual const typet &type() const { return child_abstract_object->type(); }
+  virtual bool is_top() const override { return child_abstract_object->is_top(); }
+  virtual bool is_bottom() const override { return child_abstract_object->is_bottom(); }
 
   abstract_object_pointert expression_transform(
     const exprt &expr,
     const abstract_environmentt &environment,
     const namespacet &ns) const;
 
-  virtual exprt to_constant() const override { return ao->to_constant(); }
+  virtual exprt to_constant() const override { return child_abstract_object->to_constant(); }
 
   virtual void output(
     std::ostream &out, const class ai_baset &ai, const namespacet &ns) const
   override;
 
+  bool compare(const dependency_context_abstract_objectt &b) const {
+    return this->child_abstract_object == b.child_abstract_object;
+  }
 protected:
   CLONE
 
@@ -113,10 +116,12 @@ protected:
     const abstract_objectt::locationst &locations);
 
 private:
-// To enforce copy-on-write these are private and have read-only accessors
+  // To enforce copy-on-write these are private and have read-only accessors
   abstract_objectt::locationst last_written_locations;
-  abstract_object_pointert ao;
+  abstract_object_pointert child_abstract_object;
 
+  // These are internal hooks that allow sub-classes to perform additional
+  // actions when an abstract_object is set/unset to TOP
   virtual void make_top_internal() override;
   virtual void clear_top_internal() override;
 };
