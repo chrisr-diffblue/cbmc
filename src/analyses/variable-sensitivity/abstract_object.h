@@ -123,6 +123,14 @@ public:
     return abstract_object_pointert(mutable_clone());
   }
 
+  virtual bool is_modified(const abstract_object_pointert before) const
+    {
+      // Default implementation, with no other information to go on
+      // falls back to relying on copy-on-write and pointer inequality
+      // to indicate if an abstract_objectt has been modified
+      return this != before.get();
+    };
+
   static abstract_object_pointert merge(
     abstract_object_pointert op1,
     abstract_object_pointert op2,

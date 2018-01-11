@@ -408,3 +408,63 @@ void dependency_context_abstract_objectt::output_last_written_locations(
   }
   out << "]";
 }
+
+bool dependency_context_abstract_objectt::is_modified(
+  const abstract_object_pointert before) const
+{
+  if(this==before.get())
+    return false; // copy-on-write means pointer equality implies no
+  // modifications
+
+  // FIXME: Should we confirm this and before are the same class types?
+
+  // for the last written writen locations to match
+  // each location in one must be equal to precisely one location
+  // in the other
+  // Since a set can assume at most one match
+
+  const abstract_objectt::locationst &first_write_locations=
+    before->get_last_written_locations();
+  const abstract_objectt::locationst &second_write_locations=
+    get_last_written_locations();
+
+  class location_ordert
+  {
+  public:
+    bool operator()(
+      goto_programt::const_targett instruction,
+      goto_programt::const_targett other_instruction)
+    {
+      return instruction->location_number>
+             other_instruction->location_number;
+    }
+  };
+
+  typedef std::set<goto_programt::const_targett, location_ordert>
+    sorted_locationst;
+
+  sorted_locationst lhs_location;
+  for(const auto &entry:first_write_locations)
+  {
+    lhs_location.insert(entry);
+  }
+
+  sorted_locationst rhs_location;
+  for(const auto &entry:second_write_locations)
+  {
+    rhs_location.insert(entry);
+  }
+
+  abstract_objectt::locationst intersection;
+  std::set_intersection(
+    lhs_location.cbegin(),
+    lhs_location.cend(),
+    rhs_location.cbegin(),
+    rhs_location.cend(),
+    std::inserter(intersection, intersection.end()),
+    location_ordert());
+  bool all_matched=intersection.size()==first_write_locations.size() &&
+                   intersection.size()==second_write_locations.size();
+
+  return !all_matched;
+}

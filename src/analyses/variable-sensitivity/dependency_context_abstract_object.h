@@ -56,6 +56,9 @@ public:
 
   // Standard abstract_objectt interface
 
+  virtual bool is_modified(const abstract_object_pointert before) const
+    override;
+
   virtual abstract_objectt::locationst get_last_written_locations()
     const override;
 
