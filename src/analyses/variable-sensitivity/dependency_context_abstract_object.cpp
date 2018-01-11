@@ -167,7 +167,6 @@ abstract_object_pointert dependency_context_abstract_objectt::write(
 
   // Update the child and record the updated write locations
   result->set_child(updated_child);
-  // FIXME: Should this be update_last_written_locations instead of set?
   result->set_last_written_locations(value->get_last_written_locations());
 
   return result;
