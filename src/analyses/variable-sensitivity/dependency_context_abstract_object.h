@@ -111,10 +111,6 @@ protected:
   virtual abstract_object_pointert merge(
     abstract_object_pointert other) const override ;
 
-
-  virtual void set_child(
-    const abstract_object_pointert &child);
-
   virtual abstract_object_pointert read(
     const abstract_environmentt &env,
     const exprt &specifier,
@@ -147,6 +143,9 @@ private:
 
   void set_last_written_locations(
     const abstract_objectt::locationst &locations);
+
+  void set_child(
+    const abstract_object_pointert &child);
 
 };
 
