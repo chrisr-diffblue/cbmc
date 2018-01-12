@@ -734,7 +734,7 @@ std::vector<symbol_exprt> abstract_environmentt::modified_symbols(
     const auto &second_entry = second.map.find(entry.first);
     if (second_entry != second.map.end())
     {
-      if (second_entry->second->is_modified(entry.second))
+      if (second_entry->second->has_been_modified(entry.second))
         symbols_diff.push_back(entry.first);
     }
   }

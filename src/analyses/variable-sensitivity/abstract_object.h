@@ -123,7 +123,15 @@ public:
     return abstract_object_pointert(mutable_clone());
   }
 
-  virtual bool is_modified(const abstract_object_pointert before) const
+  /**
+   * Determine whether 'this' abstract_object has been modified in comparison
+   * to a previous 'before' state.
+   * \param before The abstract_object_pointert to use as a reference to
+   * compare against
+   * \return true if 'this' is considered to have been modified in comparison
+   * to 'before', false otherwise.
+   */
+  virtual bool has_been_modified(const abstract_object_pointert before) const
     {
       // Default implementation, with no other information to go on
       // falls back to relying on copy-on-write and pointer inequality

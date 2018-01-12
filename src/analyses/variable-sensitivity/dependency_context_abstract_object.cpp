@@ -411,20 +411,32 @@ void dependency_context_abstract_objectt::output_last_written_locations(
   out << "]";
 }
 
-bool dependency_context_abstract_objectt::is_modified(
+/**
+ * Determine whether 'this' abstract_object has been modified in comparison
+ * to a previous 'before' state.
+ * \param before The abstract_object_pointert to use as a reference to
+ * compare against
+ * \return true if 'this' is considered to have been modified in comparison
+ * to 'before', false otherwise.
+ */
+bool dependency_context_abstract_objectt::has_been_modified(
   const abstract_object_pointert before) const
 {
   if(this==before.get())
-    return false; // copy-on-write means pointer equality implies no
-  // modifications
+  {
+    // copy-on-write means pointer equality implies no modifications
+    return false;
+  }
 
-  // FIXME: Should we confirm this and before are the same class types?
-
-  // for the last written writen locations to match
-  // each location in one must be equal to precisely one location
-  // in the other
-  // Since a set can assume at most one match
-
+  // Even if the pointers are different, it maybe that it has changed only
+  // because of a merge operation, rather than an actual write. Given that
+  // this class has knowledge of where writes have occured, use that
+  // information to determine if any writes have happened and use that as the
+  // proxy for whether the value has changed or not.
+  //
+  // For two sets of last written locations to match,
+  // each location in one set must be equal to precisely one location
+  // in the other, since a set can assume at most one match
   const abstract_objectt::locationst &first_write_locations=
     before->get_last_written_locations();
   const abstract_objectt::locationst &second_write_locations=
