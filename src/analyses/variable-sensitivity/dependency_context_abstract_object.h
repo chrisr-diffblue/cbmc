@@ -111,8 +111,6 @@ protected:
   virtual abstract_object_pointert merge(
     abstract_object_pointert other) const override ;
 
-  virtual void set_last_written_locations(
-    const abstract_objectt::locationst &locations) override;
 
   virtual void set_child(
     const abstract_object_pointert &child);
@@ -146,6 +144,10 @@ private:
 
   virtual abstract_object_pointert abstract_object_merge_internal(
     const abstract_object_pointert other) const override;
+
+  void set_last_written_locations(
+    const abstract_objectt::locationst &locations);
+
 };
 
 

@@ -220,8 +220,6 @@ protected:
     return internal_abstract_object_pointert(new abstract_objectt(*this));
   }
 
-  virtual void set_last_written_locations(const locationst &locations);
-
   abstract_object_pointert abstract_object_merge(
     const abstract_object_pointert other) const;
 

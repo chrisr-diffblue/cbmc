@@ -435,25 +435,6 @@ abstract_object_pointert abstract_objectt::update_location_context(
 
 /*******************************************************************\
 
-Function: abstract_objectt::set_last_written_locations
-
-  Inputs:
-   Set of locations to be written
-
- Outputs:
-   Void
-
- Purpose: Writes the provided set to the object.
-
-          For mutable objects.
-
-\*******************************************************************/
-
-void abstract_objectt::set_last_written_locations(const locationst &locations)
-{ }
-
-/*******************************************************************\
-
 Function: abstract_objectt::get_last_written_locations
 
   Inputs:
