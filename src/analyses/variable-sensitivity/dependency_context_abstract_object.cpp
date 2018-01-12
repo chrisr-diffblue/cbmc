@@ -173,7 +173,12 @@ abstract_object_pointert dependency_context_abstract_objectt::write(
 
   // Update the child and record the updated write locations
   result->set_child(updated_child);
-  result->set_last_written_locations(value->get_last_written_locations());
+  auto value_context=
+    std::dynamic_pointer_cast<const dependency_context_abstract_objectt>(value);
+
+  if(value_context)
+    result->set_last_written_locations(
+      value_context->get_last_written_locations());
 
   return result;
 }
@@ -256,14 +261,20 @@ abstract_object_pointert
   dependency_context_abstract_objectt::abstract_object_merge_internal(
     const abstract_object_pointert other) const
 {
-  abstract_objectt::locationst location_union = get_location_union(
-      other->get_last_written_locations());
+  auto other_context=
+    std::dynamic_pointer_cast<const dependency_context_abstract_objectt>(other);
 
-  // If the union is larger than the initial set, then update.
-  if(location_union.size() > get_last_written_locations().size())
+  if(other_context)
   {
-    abstract_object_pointert result = mutable_clone();
-    return result->update_location_context(location_union, false);
+    abstract_objectt::locationst location_union=get_location_union(
+      other_context->get_last_written_locations());
+
+    // If the union is larger than the initial set, then update.
+    if(location_union.size()>get_last_written_locations().size())
+    {
+      abstract_object_pointert result=mutable_clone();
+      return result->update_location_context(location_union, false);
+    }
   }
   return shared_from_this();
 }
@@ -437,8 +448,19 @@ bool dependency_context_abstract_objectt::has_been_modified(
   // For two sets of last written locations to match,
   // each location in one set must be equal to precisely one location
   // in the other, since a set can assume at most one match
+  auto before_context=
+    std::dynamic_pointer_cast<const dependency_context_abstract_objectt>
+      (before);
+
+  if(!before_context)
+  {
+    // The other context is not something we understand, so must assume
+    // that the abstract_object has been modified
+    return true;
+  }
+
   const abstract_objectt::locationst &first_write_locations=
-    before->get_last_written_locations();
+    before_context->get_last_written_locations();
   const abstract_objectt::locationst &second_write_locations=
     get_last_written_locations();
 

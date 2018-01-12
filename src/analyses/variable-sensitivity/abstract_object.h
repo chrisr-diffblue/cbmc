@@ -148,8 +148,6 @@ public:
     const locationst &locations,
     const bool update_sub_elements) const;
 
-  virtual locationst get_last_written_locations() const;
-
   // Const versions must perform copy-on-write
   abstract_object_pointert make_top() const {
     if (is_top()) return shared_from_this();

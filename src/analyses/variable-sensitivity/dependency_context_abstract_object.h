@@ -59,9 +59,6 @@ public:
   virtual bool has_been_modified(const abstract_object_pointert before) const
     override;
 
-  virtual abstract_objectt::locationst get_last_written_locations()
-    const override;
-
   virtual abstract_object_pointert update_location_context(
     const abstract_objectt::locationst &locations,
     const bool update_sub_elements) const override;
@@ -127,6 +124,8 @@ protected:
   static void output_last_written_locations(
     std::ostream &out,
     const abstract_objectt::locationst &locations);
+
+  virtual abstract_objectt::locationst get_last_written_locations() const;
 
 private:
   // To enforce copy-on-write these are private and have read-only accessors
