@@ -62,7 +62,7 @@ public:
   virtual abstract_objectt::locationst get_last_written_locations()
     const override;
 
-  virtual abstract_object_pointert update_last_written_locations(
+  virtual abstract_object_pointert update_location_context(
     const abstract_objectt::locationst &locations,
     const bool update_sub_elements) const override;
 
@@ -79,7 +79,7 @@ public:
 
     abstract_object_pointert visit(const abstract_object_pointert element) const
     {
-      return element->update_last_written_locations(locations, true);
+      return element->update_location_context(locations, true);
     }
 
     locationst locations;

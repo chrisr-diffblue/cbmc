@@ -411,7 +411,7 @@ bool abstract_objectt::should_use_base_merge(
 
 /*******************************************************************\
 
-Function: abstract_objectt::update_last_written_locations
+Function: abstract_objectt::update_location_context
 
   Inputs:
    Set of locations to be written.
@@ -420,15 +420,15 @@ Function: abstract_objectt::update_last_written_locations
    An abstract_object_pointer pointing to the cloned, updated object.
 
  Purpose: Creates a mutable clone of the current object, and updates
-          the last written location map with the provided location(s).
+          its context with the provided location(s).
 
           For immutable objects.
 
 \*******************************************************************/
 
-abstract_object_pointert abstract_objectt::update_last_written_locations(
-    const locationst &locations,
-    bool update_sub_elements) const
+abstract_object_pointert abstract_objectt::update_location_context(
+  const locationst &locations,
+  const bool update_sub_elements) const
 {
   return shared_from_this();
 }

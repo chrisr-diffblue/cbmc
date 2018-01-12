@@ -144,9 +144,10 @@ public:
     abstract_object_pointert op2,
     bool &out_modifications);
 
-  virtual abstract_object_pointert update_last_written_locations(
-      const locationst &locations,
-      const bool update_sub_elements) const;
+  virtual abstract_object_pointert update_location_context(
+    const locationst &locations,
+    const bool update_sub_elements) const;
+
   virtual locationst get_last_written_locations() const;
 
   // Const versions must perform copy-on-write

@@ -63,7 +63,7 @@ Function: dependency_context_abstract_objectt::update_last_written_locations
 
 \*******************************************************************/
 abstract_object_pointert
-  dependency_context_abstract_objectt::update_last_written_locations(
+  dependency_context_abstract_objectt::update_location_context(
     const abstract_objectt::locationst &locations,
     const bool update_sub_elements) const
 {
@@ -75,7 +75,7 @@ abstract_object_pointert
   {
     abstract_object_pointert visited_child=
       child_abstract_object->
-        update_last_written_locations(locations, update_sub_elements)->
+        update_location_context(locations, update_sub_elements)->
           visit_sub_elements(location_update_visitor(locations));
     result->set_child(visited_child);
   }
@@ -263,7 +263,7 @@ abstract_object_pointert
   if(location_union.size() > get_last_written_locations().size())
   {
     abstract_object_pointert result = mutable_clone();
-    return result->update_last_written_locations(location_union, false);
+    return result->update_location_context(location_union, false);
   }
   return shared_from_this();
 }
