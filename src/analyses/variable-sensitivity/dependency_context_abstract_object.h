@@ -14,10 +14,14 @@
 #include "array_abstract_object.h"
 
 /// General implementation of an abstract_objectt which tracks the
-/// last-written locations for a given abstract_objectt.
-/// This implementation doesn't need templating, it only delegates
-/// to an abstract_object_pointert and handles the 'last_written_location'
-/// organisation.
+/// last written locations for a given abstract_objectt.
+/// Instances of this class are constructed with an abstract_object_pointert,
+/// to which most operations are delegated, while at the same time this
+/// class handles the tracking of the 'last_written_location' information.
+///
+/// Instances of this class are best constructed via the templated version
+/// of this, 'context_abstract_objectt<T>' which provides the same
+/// constructors as the standard 'abstract_objectt' class.
 class dependency_context_abstract_objectt: public abstract_objectt
 {
 public:
