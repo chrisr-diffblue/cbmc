@@ -205,7 +205,7 @@ abstract_object_pointert dependency_context_abstract_objectt::merge(
 
   if(cast_other)
   {
-    bool child_modified;
+    bool child_modified=false;
 
     auto merged_child = abstract_objectt::merge(child_abstract_object,cast_other->child_abstract_object,
                                      child_modified);
