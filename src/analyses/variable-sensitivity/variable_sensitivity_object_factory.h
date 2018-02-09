@@ -17,7 +17,7 @@
 #include <analyses/variable-sensitivity/full_struct_abstract_object.h>
 #include <analyses/variable-sensitivity/union_abstract_object.h>
 #include <analyses/variable-sensitivity/dependency_context_abstract_object.h>
-#include <analyses/variable-sensitivity/dependence_graph_abstract_object.h>
+#include <analyses/variable-sensitivity/dominator_context_abstract_object.h>
 #include <util/options.h>
 #include <util/namespace.h>
 
