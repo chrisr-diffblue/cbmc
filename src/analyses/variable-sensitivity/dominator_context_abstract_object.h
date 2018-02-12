@@ -7,6 +7,13 @@
 //
 // What about json output? Does Variable sensitivity support that already? If not,
 // more work to do...
+//
+// Existing implementation does the following AI operations:
+// * merge(domain, from, to)
+// * transform(from, to, ai, ns)
+// * output
+// * output_json
+// 
 
 #ifndef CPROVER_ANALYSES_VARIABLE_SENSITIVITY_DOMINATOR_CONTEXT_ABSTRACT_OBJECT_H
 #define CPROVER_ANALYSES_VARIABLE_SENSITIVITY_DOMINATOR_CONTEXT_ABSTRACT_OBJECT_H
