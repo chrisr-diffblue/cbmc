@@ -13,6 +13,11 @@
 // * transform(from, to, ai, ns)
 // * output
 // * output_json
+//
+// Equivalents in Variable Sensitivity are, I think:
+// * merge -> merge(AO, AO, bool)
+// * transform -> possibly update_location_context/read/write
+// * output -> needs some thought
 // 
 
 #ifndef CPROVER_ANALYSES_VARIABLE_SENSITIVITY_DOMINATOR_CONTEXT_ABSTRACT_OBJECT_H
@@ -51,7 +56,8 @@ public:
   { }
 
 private:
-  cfg_post_dominatorst dominators;
+  typedef std::set<goto_programt::const_targett> dependencest;
+  dependencest control_deps, data_deps;
 };
 
 /**
