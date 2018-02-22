@@ -55,6 +55,13 @@ public:
       dependency_context_abstract_objectt(child, expr, environment, ns)
   { }
 
+  virtual void output(
+    std::ostream &out, const class ai_baset &ai, const namespacet &ns) const
+  override;
+
+protected:
+  CLONE
+
 private:
   typedef std::set<goto_programt::const_targett> dependencest;
   dependencest control_deps, data_deps;

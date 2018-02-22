@@ -48,3 +48,10 @@
  * NOTE: dependence_grapht keeps global state - its the abstract_env, so this
  * e.g. has an entry to get the 'state' for a given locationt
  */
+
+void dominator_context_abstract_objectt::output(
+  std::ostream &out, const class ai_baset &ai, const namespacet &ns) const
+{
+  std::cout << "[dominator context output called]" << std::endl;
+  out << "[Dominator stuff here]";
+}
