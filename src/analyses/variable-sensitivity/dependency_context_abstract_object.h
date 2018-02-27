@@ -153,9 +153,11 @@ private:
   virtual void make_top_internal() override;
   virtual void clear_top_internal() override;
 
+protected:
   virtual abstract_object_pointert abstract_object_merge_internal(
     const abstract_object_pointert other) const override;
 
+private:
   void set_last_written_locations(
     const abstract_objectt::locationst &locations);
 
