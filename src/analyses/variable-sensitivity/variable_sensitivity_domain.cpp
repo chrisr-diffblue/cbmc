@@ -16,6 +16,7 @@ Date: April 2016
 
 #include "variable_sensitivity_domain.h"
 #include <util/cprover_prefix.h>
+#include <iostream>
 
 #ifdef DEBUG
 #include <iostream>

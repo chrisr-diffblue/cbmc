@@ -14,11 +14,11 @@ void variable_sensitivity_dependence_graph_domaint::populate_dep_graph(
 {
 }
 
-void variable_sensitivity_dependence_graph_domaint::output(
-    std::ostream &out,
-    const ai_baset &ai,
-    const namespacet &ns) const
-{
-  out << "[variable-sensitvity-dependence-graph stuff here]";
-}
+//void variable_sensitivity_dependence_graph_domaint::output(
+//    std::ostream &out,
+//    const ai_baset &ai,
+//    const namespacet &ns) const
+//{
+//  out << "[variable-sensitvity-dependence-graph stuff here]";
+//}
 

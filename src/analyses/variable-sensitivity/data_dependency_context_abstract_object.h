@@ -1,24 +1,15 @@
 // Rough implementaition plan:
 //
-// * Extend the dependency_context_abstract_object to:
-//   - Handle merge of deps (how?)
-//   - perform transforms (how?)
-//   - Output deps
-//
-// What about json output? Does Variable sensitivity support that already? If not,
-// more work to do...
-//
-// Existing implementation does the following AI operations:
-// * merge(domain, from, to)
-// * transform(from, to, ai, ns)
-// * output
-// * output_json
-//
-// Equivalents in Variable Sensitivity are, I think:
-// * merge -> merge(AO, AO, bool)
-// * transform -> possibly update_location_context/read/write
-// * output -> needs some thought
-// 
+// BRAIN DUMP:
+// Need to keep track of both data dependencies *and* dominators...
+// any write is a dependency, but a subset of those will be dominators.
+// Keep track of all writes to record the data depencencies - these will be
+// Toyotas 'MAYBE' dependencies. For the dominators, can either use the
+// existing graph algorithms, but would be preferable to to use the AI, which
+// can probably/possible be done by doing something clever in the merge? e.g.
+// at each merge point, figure out if something is a dominator and if so, merge
+// it, otherwise discard it.
+
 
 #ifndef CPROVER_ANALYSES_VARIABLE_SENSITIVITY_DATA_DEPENDENCY_CONTEXT_ABSTRACT_OBJECT_H
 #define CPROVER_ANALYSES_VARIABLE_SENSITIVITY_DATA_DEPENDENCY_CONTEXT_ABSTRACT_OBJECT_H
@@ -109,15 +100,15 @@ private:
  * context information
  */
 template <class AOT>
-class dominator_context_instance_abstract_objectt:
+class data_dependency_context_instance_abstract_objectt:
   public data_dependency_context_abstract_objectt
 {
 public:
-  explicit dominator_context_instance_abstract_objectt(const typet &type):
+  explicit data_dependency_context_instance_abstract_objectt(const typet &type):
     data_dependency_context_abstract_objectt(
       abstract_object_pointert(new AOT(type)), type) {}
 
-  dominator_context_instance_abstract_objectt(
+  data_dependency_context_instance_abstract_objectt(
     const typet &type,
     bool top,
     bool bottom):
@@ -127,7 +118,7 @@ public:
           top,
           bottom) {}
 
-  explicit dominator_context_instance_abstract_objectt(
+  explicit data_dependency_context_instance_abstract_objectt(
     const exprt &expr,
     const abstract_environmentt &environment,
     const namespacet &ns):

@@ -28,10 +28,10 @@ public:
   void populate_dep_graph(
     variable_sensitivity_dependence_grapht &, goto_programt::const_targett) const;
 
-  virtual void output(
-    std::ostream &out,
-    const ai_baset &ai,
-    const namespacet &ns) const override;
+//  virtual void output(
+//    std::ostream &out,
+//    const ai_baset &ai,
+//    const namespacet &ns) const override;
 
 
 private:
