@@ -24,6 +24,7 @@ Author: Daniel Poetzl
 #include <string>
 #include <tuple>
 #include <vector>
+#include <set>
 
 #include "irep.h"
 #include "sharing_node.h"
@@ -39,6 +40,11 @@ Author: Daniel Poetzl
 #define SHARING_MAPT(R) \
   template <class keyT, class valueT, class hashT, class equalT> \
   R sharing_mapt<keyT, valueT, hashT, equalT>
+
+#define SHARING_MAPTV(R, V) \
+  template <class keyT, class valueT, class hashT, class predT> \
+  template <class V> \
+  R sharing_mapt<keyT, valueT, hashT, predT>
 
 #define SHARING_MAPT2(CV, ST) \
   template <class keyT, class valueT, class hashT, class equalT> \
@@ -261,6 +267,17 @@ public:
   /// View of the key-value pairs in the map. A view is a list of pairs with
   /// the components being const references to the keys and values in the map.
   typedef std::vector<view_itemt> viewt;
+  typedef std::set<view_itemt> sorted_viewt;
+
+  static void insert_view_item(viewt &v, view_itemt &&vi)
+  {
+      v.push_back(vi);
+  }
+
+  static void insert_view_item(sorted_viewt &v, view_itemt &&vi)
+  {
+      v.insert(vi);
+  }
 
   class delta_view_itemt
   {
@@ -290,7 +307,7 @@ public:
   /// that are not shared between them (also see get_delta_view()).
   typedef std::vector<delta_view_itemt> delta_viewt;
 
-  void get_view(viewt &view) const;
+  template <class V> void get_view(V&) const;
   viewt get_view() const
   {
     viewt result;
@@ -302,6 +319,9 @@ public:
     const sharing_mapt &other,
     delta_viewt &delta_view,
     const bool only_common = true) const;
+
+  delta_viewt get_delta_view(
+    const sharing_mapt &other, const bool only_common=true) const;
 
   /// Stats about sharing between several sharing map instances. An instance of
   /// this class is returned by the get_sharing_map_stats_* functions.
@@ -602,7 +622,7 @@ SHARING_MAPT3(Iterator, , sharing_map_statst)
 /// - Best case: O(N + H)
 ///
 /// \param[out] view: Empty view
-SHARING_MAPT(void)::get_view(viewt &view) const
+SHARING_MAPTV(void, view_type)::get_view(view_type &view) const
 {
   SM_ASSERT(view.empty());
 
@@ -610,7 +630,7 @@ SHARING_MAPT(void)::get_view(viewt &view) const
     return;
 
   auto f = [&view](const key_type &k, const mapped_type &m) {
-    view.push_back(view_itemt(k, m));
+    insert_view_item(view, view_itemt(k, m));
   };
 
   iterate(map, 0, f);
@@ -758,6 +778,15 @@ SHARING_MAPT(void)
     }
   }
   while(!stack.empty());
+}
+
+SHARING_MAPT2(, delta_viewt)::get_delta_view(
+  const sharing_mapt &other,
+  const bool only_common) const
+{
+  delta_viewt delta_view;
+  get_delta_view(other, delta_view, only_common);
+  return delta_view;
 }
 
 SHARING_MAPT2(, innert *)::get_container_node(const key_type &k)
