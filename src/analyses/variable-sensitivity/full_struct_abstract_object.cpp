@@ -96,6 +96,7 @@ full_struct_abstract_objectt::full_struct_abstract_objectt(
   const namespacet &ns):
     struct_abstract_objectt(e, environment, ns)
 {
+  PRECONDITION(ns.follow(e.type()).id()==ID_struct);
   if(e.id() == ID_struct)
   {
     // FIXME Should attempt to fill in field values from exprt e here, e.g. in
@@ -110,6 +111,7 @@ full_struct_abstract_objectt::full_struct_abstract_objectt(
     // FIXME struct level deps and field level deps?
     const struct_typet struct_type_def = to_struct_type(ns.follow(e.type()));
 
+    bool values_initialized = false;
     auto struct_type_it = struct_type_def.components().begin();
     for(auto param_it = e.operands().begin();
         param_it != e.operands().end();
@@ -117,7 +119,13 @@ full_struct_abstract_objectt::full_struct_abstract_objectt(
     {
       map[struct_type_it->get_name()]=environment.abstract_object_factory
         (param_it->type(), *param_it, ns);
+      values_initialized = true;
       ++struct_type_it;
+    }
+
+    if(values_initialized)
+    {
+      clear_top();
     }
   }
   DATA_INVARIANT(verify(), "Structural invariants maintained");
