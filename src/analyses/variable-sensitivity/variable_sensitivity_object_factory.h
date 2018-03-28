@@ -64,10 +64,20 @@ private:
     const exprt &e,
     const abstract_environmentt &enviroment,
     const namespacet &ns);
+  template <class abstract_object_class, class context_classt>
+  abstract_object_pointert initialize_context_abstract_object(
+    const typet type,
+    bool top,
+    bool bottom,
+    const exprt &e,
+    const abstract_environmentt &enviroment,
+    const namespacet &ns);
   bool has_variables_flag;
   bool has_structs_flag;
   bool has_arrays_flag;
   bool has_pointers_flag;
+  bool has_last_written_location_context_flag;
+  bool has_data_dependencies_context_flag;
   bool initialized;
 };
 
@@ -100,17 +110,47 @@ abstract_object_pointert variable_sensitivity_object_factoryt::
     const abstract_environmentt &enviroment,
     const namespacet &ns)
 {
+  if(has_data_dependencies_context_flag)
+    return initialize_context_abstract_object<
+      abstract_object_classt, data_dependency_context_abstract_objectt>(
+        type, top, bottom, e, enviroment, ns);
+  if(has_last_written_location_context_flag)
+    return initialize_context_abstract_object<
+      abstract_object_classt, dependency_context_abstract_objectt>(
+        type, top, bottom, e, enviroment, ns);
+  // No context wrappers enabled
+  // FIXME: Should implement something sort of NOP here!
+  UNREACHABLE;
+}
+
+template <class abstract_object_classt, class context_classt>
+abstract_object_pointert variable_sensitivity_object_factoryt::
+  initialize_context_abstract_object(
+    const typet type,
+    bool top,
+    bool bottom,
+    const exprt &e,
+    const abstract_environmentt &enviroment,
+    const namespacet &ns)
+{
   if(top || bottom)
   {
     return abstract_object_pointert(
-      new abstract_object_classt(type, top, bottom));
+      new context_classt(
+        abstract_object_pointert(
+          new abstract_object_classt(type, top, bottom)),
+        type, top, bottom));
   }
   else
   {
     PRECONDITION(type==ns.follow(e.type()));
     return abstract_object_pointert(
-      new abstract_object_classt(e, enviroment, ns));
+      new context_classt(
+        abstract_object_pointert(
+          new abstract_object_classt(e, enviroment, ns)),
+        e, enviroment, ns));
   }
 }
+
 
 #endif // CPROVER_ANALYSES_VARIABLE_SENSITIVITY_VARIABLE_SENSITIVITY_OBJECT_FACTORY_H // NOLINT(*)
