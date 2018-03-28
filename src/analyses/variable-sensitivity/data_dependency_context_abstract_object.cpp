@@ -1,4 +1,64 @@
+#include <algorithm>
+#include <iterator>
+
 #include "data_dependency_context_abstract_object.h"
+
+/**
+ * Determine whether 'this' abstract_object has been modified in comparison
+ * to a previous 'before' state.
+ *
+ * \param before the abstract_object_pointert to use as a reference to
+ * compare against
+ *
+ * \return true if 'this' is considered to have been modified in comparison
+ * to 'before', false otherwise.
+ */
+bool data_dependency_context_abstract_objectt::has_been_modified(
+  const abstract_object_pointert before) const
+{
+  if(this->dependency_context_abstract_objectt::has_been_modified(before))
+    return true;
+
+  auto cast_before=
+    std::dynamic_pointer_cast<const data_dependency_context_abstract_objectt>
+      (before);
+
+  if(!cast_before)
+  {
+    // The other context is not something we understand, so must assume
+    // that the abstract_object has been modified
+    return true;
+  }
+
+  // FIXME: Check deps are the same too....
+  abstract_objectt::locationst intersection;
+  std::set_intersection(
+    data_deps.cbegin(),
+    data_deps.cend(),
+    cast_before->data_deps.cbegin(),
+    cast_before->data_deps.cend(),
+    std::inserter(intersection, intersection.end()),
+    location_ordert());
+  bool all_matched=intersection.size()==data_deps.size() &&
+                   intersection.size()==cast_before->data_deps.size();
+
+  if(!all_matched)
+    return true;
+
+  intersection.clear();
+  std::set_intersection(
+    data_dominators.cbegin(),
+    data_dominators.cend(),
+    cast_before->data_dominators.cbegin(),
+    cast_before->data_dominators.cend(),
+    std::inserter(intersection, intersection.end()),
+    location_ordert());
+
+  all_matched=intersection.size()==data_dominators.size() &&
+              intersection.size()==cast_before->data_dominators.size();
+
+  return !all_matched;
+}
 
 
 abstract_object_pointert data_dependency_context_abstract_objectt::write(
@@ -13,7 +73,7 @@ abstract_object_pointert data_dependency_context_abstract_objectt::write(
     this->dependency_context_abstract_objectt::write(
       environment, ns, stack, specifier, value, merging_write);
 
-  auto cast_parent =
+  const auto cast_parent =
     std::dynamic_pointer_cast<const data_dependency_context_abstract_objectt>
       (updated_parent);
 
@@ -21,16 +81,11 @@ abstract_object_pointert data_dependency_context_abstract_objectt::write(
     std::dynamic_pointer_cast<data_dependency_context_abstract_objectt>(
       cast_parent->mutable_clone());
 
-  auto cast_value=
+  const auto cast_value=
     std::dynamic_pointer_cast<const data_dependency_context_abstract_objectt>(value);
 
   // TODO: Do a more intelligent merge here???
-  for(auto dep : cast_value->data_deps)
-  {
-    std::clog << " ### Logging dependency " << dep->location_number << " in"
-      " write()" << std::endl;
-    result->data_deps.insert(dep);
-  }
+  result->insert_data_deps(cast_value->data_deps);
 
   result->dump_data_deps("dominator_context::write");
   return result;
@@ -64,11 +119,8 @@ data_dependency_context_abstract_objectt::update_location_context(
     std::dynamic_pointer_cast<data_dependency_context_abstract_objectt>(
       cast_parent->mutable_clone());
 
-  // TODO: Do a more intelligent merge here???
-  for(auto d : locations)
-  {
-    result->data_deps.insert(d);
-  }
+  // FIXME: Do a more intelligent merge here???
+  result->insert_data_deps(locations);
 
   result->dump_data_deps("dominator_context::update_location_context");
   return result;
@@ -100,10 +152,20 @@ abstract_object_pointert data_dependency_context_abstract_objectt::merge(
       std::dynamic_pointer_cast<data_dependency_context_abstract_objectt>(
         cast_merged_parent->mutable_clone());
 
-    for(auto d : cast_other->data_deps)
-    {
-      result->data_deps.insert(d);
-    }
+    result->insert_data_deps(cast_other->data_deps);
+    // On a merge, data_dominators are the intersection of this object and the
+    // other object. In other words, the dominators at this merge point are
+    // those dominators that exist in all possible execution paths to this
+    // merge point.
+    // FIXME: This can probably be done a lot more efficently than this clear()
+    //        and rebuild approach...
+    result->data_dominators.clear();
+    std::set_intersection(
+      data_dominators.begin(), data_dominators.end(),
+      cast_other->data_dominators.begin(), cast_other->data_dominators.end(),
+      std::inserter(result->data_dominators, result->data_dominators.end()),
+      location_ordert());
+
 
     result->dump_data_deps("dominator_context::merge");
     return result;
@@ -144,10 +206,7 @@ data_dependency_context_abstract_objectt::abstract_object_merge_internal(
       std::dynamic_pointer_cast<data_dependency_context_abstract_objectt>(
         cast_merged_parent->mutable_clone());
 
-    for(auto d : other_context->data_deps)
-    {
-      result->data_deps.insert(d);
-    }
+    result->insert_data_deps(other_context->data_deps);
 
     result->dump_data_deps("dominator_context::abstract_object_merge_internal");
     return result;
@@ -158,13 +217,22 @@ data_dependency_context_abstract_objectt::abstract_object_merge_internal(
 void data_dependency_context_abstract_objectt::output(
   std::ostream &out, const class ai_baset &ai, const namespacet &ns) const
 {
-  this->dependency_context_abstract_objectt::output(out, ai,
-                                                                    ns);
+  this->dependency_context_abstract_objectt::output(out, ai, ns);
 
   out << "<Data dependencies: ";
 
   bool comma = false;
   for(auto d : data_deps)
+  {
+    out << (comma ? ", " : "") << d->location_number;
+    comma = true;
+  }
+  out << '>';
+
+  out << "<Data dominators: ";
+
+  comma = false;
+  for(auto d : data_dominators)
   {
     out << (comma ? ", " : "") << d->location_number;
     comma = true;

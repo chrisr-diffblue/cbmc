@@ -9,16 +9,13 @@
 #include "variable_sensitivity_dependence_graph.h"
 
 
-void variable_sensitivity_dependence_graph_domaint::populate_dep_graph(
-  variable_sensitivity_dependence_grapht &, goto_programt::const_targett) const
+void variable_sensitivity_dependence_grapht::output(
+   std::ostream &out,
+   const ai_baset &ai,
+   const namespacet &ns) const
 {
+ out << "[TODO: Proper variable-sensitvity-dependence-graph stuff here]";
+ variable_sensitivity_domaint::output(out, ai, ns);
+ out << "[TODO: Proper variable-sensitvity-dependence-graph stuff here]";
 }
-
-//void variable_sensitivity_dependence_graph_domaint::output(
-//    std::ostream &out,
-//    const ai_baset &ai,
-//    const namespacet &ns) const
-//{
-//  out << "[variable-sensitvity-dependence-graph stuff here]";
-//}
 

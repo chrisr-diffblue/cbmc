@@ -299,16 +299,18 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
       options.set_option("pointers", cmdline.isset("pointers"));
       options.set_option("arrays", cmdline.isset("arrays"));
       options.set_option("structs", cmdline.isset("structs"));
+      options.set_option("data-dependencies", cmdline.isset("data-dependencies"));
     }
-    else if(cmdline.isset("variable-sensitivity-dependence-graph"))
+    else if(cmdline.isset("dependence-graph-vs"))
     {
-      options.set_option("variable-sensitivity-dependence-graph", true);
+      options.set_option("dependence-graph-vs", true);
       options.set_option("domain set", true);
 
-      // Configuration of variable sensitivity
+      // Configuration of variable sensitivity domain
       options.set_option("pointers", cmdline.isset("pointers"));
       options.set_option("arrays", cmdline.isset("arrays"));
       options.set_option("structs", cmdline.isset("structs"));
+            options.set_option("data-dependencies", true);
     }
 
     // Reachability questions, when given with a domain swap from specific
@@ -368,9 +370,9 @@ ai_baset *goto_analyzer_parse_optionst::build_analyzer(
     {
       domain=new ait<variable_sensitivity_domaint>();
     }
-    else if(options.get_bool_option("variable-sensitivity-dependence-graph"))
+    else if(options.get_bool_option("dependence-graph-vs"))
     {
-      domain=new variable_sensitivity_dependence_grapht(ns);
+      domain=new ait<variable_sensitivity_dependence_grapht>;
     }
   }
   else if(options.get_bool_option("concurrent"))

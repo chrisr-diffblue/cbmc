@@ -61,6 +61,7 @@ public:
     const abstract_objectt::locationst &locations,
     const bool update_sub_elements) const override;
 
+  bool has_been_modified(const abstract_object_pointert before) const override;
 
   virtual void output(
     std::ostream &out, const class ai_baset &ai, const namespacet &ns) const
@@ -77,8 +78,37 @@ protected:
 
 
 private:
-  typedef std::set<goto_programt::const_targett> dependencest;
+  class location_ordert
+  {
+  public:
+    bool operator()(
+      goto_programt::const_targett instruction,
+      goto_programt::const_targett other_instruction)
+    {
+      return instruction->location_number>
+             other_instruction->location_number;
+    }
+  };
+  typedef std::set<goto_programt::const_targett, location_ordert> dependencest;
   dependencest data_deps;
+  dependencest data_dominators;
+
+  template<typename LSET>
+  void insert_data_deps(const LSET locations)
+  {
+    // FIXME: Is this the correct assumption? e.g that first write => dominator?
+    // FIXME: Seems logical, but worth checking with Martin
+    const bool first_write = data_deps.empty();
+
+    for(auto l : locations)
+    {
+      data_deps.insert(l);
+      if(first_write)
+      {
+        data_dominators.insert(l);
+      }
+    }
+  }
 
   void dump_data_deps(const std::string msg) const
   {
@@ -86,6 +116,13 @@ private:
     std::clog << "<<< " << msg << ": Full data deps: ";
     bool comma = false;
     for(auto d : data_deps)
+    {
+      std::clog << (comma ? ", " : "") << d->location_number;
+      comma = true;
+    }
+    std::clog << "    : Dominators: ";
+    comma = false;
+    for(auto d : data_dominators)
     {
       std::clog << (comma ? ", " : "") << d->location_number;
       comma = true;

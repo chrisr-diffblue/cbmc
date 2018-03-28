@@ -144,7 +144,7 @@ class optionst;
   "(pointers)(arrays)(structs)" \
   "(constants)" \
   "(dependence-graph)" \
-  "(variable-sensitivity-dependence-graph)" \
+  "(dependence-graph-vs)" \
   "(show)(verify)(simplify):" \
   "(location-sensitive)(concurrent)" \
   "(no-simplify-slicing)" \
