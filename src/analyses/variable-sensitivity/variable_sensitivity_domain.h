@@ -129,6 +129,7 @@ private:
     const variable_sensitivity_domaint &target,
     const namespacet &ns);
 
+protected:
   abstract_environmentt abstract_state;
 };
 
