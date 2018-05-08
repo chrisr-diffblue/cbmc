@@ -428,7 +428,7 @@ void goto_convertt::clean_expr(
   }
   else if(expr.id()==ID_let)
   {
-    rewrite_let(expr, dest);
+    rewrite_let(expr, dest, mode);
     return;
   }
 
@@ -560,7 +560,8 @@ Function: goto_convertt::rewrite_let
 
 void goto_convertt::rewrite_let(
   exprt &expr,
-  goto_programt &dest)
+  goto_programt &dest,
+  const irep_idt &mode)
 {
   symbolt &let_result=
     get_fresh_aux_symbol(
@@ -580,5 +581,5 @@ void goto_convertt::rewrite_let(
   code_assignt result_assignment(let_result.symbol_expr(), let_expr.where());
   equivalent_block.move_to_operands(result_assignment);
   expr=let_result.symbol_expr();
-  convert(equivalent_block, dest);
+  convert(equivalent_block, dest, mode);
 }

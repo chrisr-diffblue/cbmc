@@ -11,6 +11,7 @@ Author: Chris Smowton, chris.smowton@diffblue.com
 #ifndef CPROVER_JSON_SYMTAB_LANGUAGE_JSON_SYMTAB_LANGUAGE_H
 #define CPROVER_JSON_SYMTAB_LANGUAGE_JSON_SYMTAB_LANGUAGE_H
 
+#include <goto-programs/goto_functions.h>
 #include <langapi/language.h>
 #include <util/json.h>
 #include <util/make_unique.h> // unique_ptr
@@ -25,8 +26,11 @@ class json_symtab_languaget:public languaget
   bool generate_support_functions(
     symbol_tablet &symbol_table) override
   {
-    // Not implemented.
-    return true;
+    // check if entry point is already there
+    bool entry_point_exists =
+      symbol_table.symbols.find(goto_functionst::entry_point()) !=
+        symbol_table.symbols.end();
+    return !entry_point_exists;
   }
 
   bool typecheck(
