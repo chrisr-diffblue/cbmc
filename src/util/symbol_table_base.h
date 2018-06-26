@@ -179,7 +179,7 @@ public:
       return &**this;
     }
 
-    symbolt &get_writeable_symbol(const irep_idt &identifier)
+    symbolt &get_writeable_symbol()
     {
       if(on_get_writeable)
         on_get_writeable((*this)->first);
