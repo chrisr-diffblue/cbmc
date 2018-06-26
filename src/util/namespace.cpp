@@ -67,6 +67,23 @@ void namespace_baset::follow_symbol(irept &irep) const
   }
 }
 
+void namespace_baset::follow_type_symbol(irept &irep) const
+{
+  while(irep.id() == ID_symbol)
+  {
+    const symbolt &symbol = lookup(irep);
+
+    if(symbol.is_type && !symbol.type.is_nil())
+    {
+      irep = symbol.type;
+    }
+    else
+    {
+      break;
+    }
+  }
+}
+
 const typet &namespace_baset::follow(const typet &src) const
 {
   if(src.id()!=ID_symbol)
