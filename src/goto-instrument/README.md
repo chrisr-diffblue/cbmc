@@ -26,3 +26,5 @@ developers are advised to copy the directory, remove all files apart
 from `main.*`, `parseoptions.*` and the `Makefile` and use these as the
 skeleton of their application. The `doit()` method in `parseoptions.cpp`
 is the preferred location for the top level control for the program.
+
+Dummy commit to test.
