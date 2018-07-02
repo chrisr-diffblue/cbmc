@@ -14,9 +14,11 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <string>
 
-#include <util/unicode.h>
+#include <util/exception_utils.h>
 #include <util/make_unique.h>
+#include <util/unicode.h>
 
 #include <solvers/sat/satcheck.h>
 #include <solvers/refinement/bv_refinement.h>
@@ -168,8 +170,10 @@ std::unique_ptr<cbmc_solverst::solvert> cbmc_solverst::get_smt2(
   {
     if(solver==smt2_dect::solvert::GENERIC)
     {
-      error() << "please use --outfile" << eom;
-      throw 0;
+      throw invalid_user_input_exceptiont(
+        "Failed to provide a filename",
+        "--outfile",
+        "provide a filename with --outfile");
     }
 
     auto smt2_dec=
@@ -213,8 +217,8 @@ std::unique_ptr<cbmc_solverst::solvert> cbmc_solverst::get_smt2(
 
     if(!*out)
     {
-      error() << "failed to open " << filename << eom;
-      throw 0;
+      throw invalid_user_input_exceptiont(
+        "Failed to open suggested file: " + filename, "--outfile");
     }
 
     auto smt2_conv=
@@ -237,20 +241,38 @@ std::unique_ptr<cbmc_solverst::solvert> cbmc_solverst::get_smt2(
 
 void cbmc_solverst::no_beautification()
 {
-  if(options.get_bool_option("beautify"))
+  bool beautify = options.get_bool_option("beautify");
+
+  if(beautify)
   {
-    error() << "sorry, this solver does not support beautification" << eom;
-    throw 0;
+    throw invalid_user_input_exceptiont(
+      "Sorry, this solver does not support beautification",
+      "--beautify");
   }
 }
 
 void cbmc_solverst::no_incremental_check()
 {
-  if(options.get_bool_option("all-properties") ||
-     options.get_option("cover")!="" ||
-     options.get_option("incremental-check")!="")
+  bool all_properties = options.get_bool_option("all-properties");
+  bool cover = options.get_option("cover") != "";
+  bool incremental_check = options.get_option("incremental-check") != "";
+
+  if(all_properties)
   {
-    error() << "sorry, this solver does not support incremental solving" << eom;
-    throw 0;
+    throw invalid_user_input_exceptiont(
+      "Sorry, this solver does not support incremental solving",
+      "--all_properties");
+  }
+  else if(cover)
+  {
+    throw invalid_user_input_exceptiont(
+      "Sorry, this solver does not support incremental solving",
+      "--cover");
+  }
+  else if(incremental_check)
+  {
+    throw invalid_user_input_exceptiont(
+      "Sorry, this solver does not support incremental solving",
+      "--incremental-check");
   }
 }
