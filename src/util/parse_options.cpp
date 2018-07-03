@@ -18,6 +18,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #endif
 
 #include "cmdline.h"
+#include "exception_utils.h"
+#include "exit_codes.h"
 #include "signal_catcher.h"
 
 parse_options_baset::parse_options_baset(
@@ -81,4 +83,20 @@ banner_string(const std::string &front_end, const std::string &version)
 
   return "* *" + std::string(left_padding, ' ') + version_str +
          std::string(right_padding, ' ') + "* *";
+}
+
+int parse_optionst::main()
+{
+  // catch all exceptions here so that this code is not duplicated
+  // for each tool
+  try
+  {
+    return parse_options_baset::main();
+  }
+  catch(invalid_user_input_exceptiont &e)
+  {
+  	message.error() << e.what() << messaget::eom;
+  	return CPROVER_EXIT_EXCEPTION;
+  }
+  return CPROVER_EXIT_SUCCESS;
 }
