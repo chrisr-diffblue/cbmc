@@ -39,6 +39,7 @@ SRC = arith_tools.cpp \
       json_irep.cpp \
       json_stream.cpp \
       json_symbol_table.cpp \
+      json_symbol.cpp \
       lispexpr.cpp \
       lispirep.cpp \
       memory_info.cpp \
