@@ -43,6 +43,7 @@ public:
   virtual ~namespace_baset();
 
   void follow_symbol(irept &irep) const;
+  void follow_type_symbol(irept &irep) const;
   void follow_macros(exprt &expr) const;
   const typet &follow(const typet &src) const;
 

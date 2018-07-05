@@ -60,6 +60,9 @@ class json_symtab_languaget:public languaget
   }
 
  protected:
+  void follow_type_symbols(symbol_tablet &symbol_table);
+  void follow_type_symbols(irept &irep, const namespacet &ns);
+
   jsont parsed_json_file;
 };
 
