@@ -78,7 +78,7 @@ class optionst;
 // clang-format on
 
 class cbmc_parse_optionst:
-  public parse_options_baset,
+  public parse_optionst,
   public xml_interfacet,
   public messaget
 {
