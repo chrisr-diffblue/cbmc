@@ -1,4 +1,8 @@
+cmake_minimum_required(VERSION 3.2)
+
 project(CBMC)
+
+include(config.cmake)
 
 find_package(BISON)
 find_package(FLEX)
@@ -101,3 +105,38 @@ add_subdirectory(goto-cc)
 add_subdirectory(goto-instrument)
 add_subdirectory(goto-analyzer)
 add_subdirectory(goto-diff)
+
+set_target_properties(
+    analyses
+    ansi-c
+    assembler
+    big-int
+    cbmc
+    cbmc-lib
+    cpp
+
+    goto-analyzer
+    goto-analyzer-lib
+    goto-cc
+    goto-cc-lib
+    goto-diff
+    goto-diff-lib
+    goto-instrument
+    goto-instrument-lib
+    goto-programs
+    goto-symex
+    jsil
+    json
+    langapi
+    linking
+    pointer-analysis
+    solvers
+    test-bigint
+    util
+    xml
+
+    PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED true
+    XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application: Daniel Kroening"
+)
