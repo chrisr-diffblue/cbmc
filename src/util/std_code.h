@@ -21,6 +21,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "validate.h"
 #include "validate_code.h"
 
+#include <iostream>
+
 /// Data structure for representing an arbitrary statement in a program. Every
 /// specific type of statement (e.g. block of statements, assignment,
 /// if-then-else statement...) is represented by a subtype of `codet`.
@@ -1135,12 +1137,7 @@ public:
   {
     check(code, vm);
 
-    if(code.op0().id() == ID_nil)
-      DATA_CHECK(
-        vm,
-        to_code_type(code.op1().type()).return_type().id() == ID_empty,
-        "void function should not return value");
-    else
+    if(code.op0().id() != ID_nil)
       DATA_CHECK(
         vm,
         base_type_eq(
