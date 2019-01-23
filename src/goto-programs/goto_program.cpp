@@ -17,6 +17,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/expr_iterator.h>
 #include <util/find_symbols.h>
 #include <util/invariant.h>
+#include <goto-programs/remove_returns.h>
 #include <util/std_expr.h>
 #include <util/validate.h>
 
@@ -709,13 +710,46 @@ void goto_programt::instructiont::validate(
         const auto &goto_id = goto_symbol_expr.get_identifier();
 
         if(!ns.lookup(goto_id, table_symbol))
+        {
+          bool symbol_expr_type_matches_symbol_table =
+            base_type_eq(goto_symbol_expr.type(), table_symbol->type, ns);
+
+          if(!symbol_expr_type_matches_symbol_table &&
+            table_symbol->type.id() == ID_code)
+          {
+            // Return removal sets the return type of a function symbol table
+            // entry to 'void', but some callsites still expect the original
+            // type (e.g. if a function is passed as a parameter)
+
+            // Check whether return removal has happend
+            const irep_idt return_value_symbol_name =
+              id2string(goto_id) + RETURN_VALUE_SUFFIX;
+            const symbolt *return_value_symbol;
+
+            if(!ns.lookup(return_value_symbol_name, return_value_symbol))
+            {
+              // Return removal has been applied. Temporarily rebuild the full
+              // type of the function and use that full type to check
+              // consistency with the goto program
+              auto full_table_symbol_type = to_code_type(table_symbol->type);
+              full_table_symbol_type.return_type() = return_value_symbol->type;
+
+              symbol_expr_type_matches_symbol_table =
+                base_type_eq(
+                  goto_symbol_expr.type(),
+                  full_table_symbol_type,
+                  ns);
+            }
+          }
+
           DATA_CHECK_WITH_DIAGNOSTICS(
             vm,
-            base_type_eq(goto_symbol_expr.type(), table_symbol->type, ns),
+            symbol_expr_type_matches_symbol_table,
             id2string(goto_id) + " type inconsistency\n" +
               "goto program type: " + goto_symbol_expr.type().id_string() +
               "\n" + "symbol table type: " + table_symbol->type.id_string(),
             current_source_location);
+        }
       }
     };
 
